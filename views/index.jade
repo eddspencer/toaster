@@ -4,5 +4,29 @@ block content
   h1= title
 
   canvas(id="draw", resize="true")
+  
+  div
+    button(class="btn btn-default", id="start") Start
+    button(class="btn btn-default", id="stop") Stop
+  
+  h2 Current State
+  
+  table(class="table-condensed table-bordered")
+    tr
+      th Property
+      th Value
+    tr
+      td X
+      td(id="x") 
+    tr
+      td Y
+      td(id="y")
+    tr
+      td dx
+      td(id="dx")
+    tr
+      td dx
+      td(id="dy")
+      
   script(type="text/javascript", src="javascripts/lazywebsocket.js")
   script(type="text/javascript", src="javascripts/canvas.js", host=host, canvas="draw")

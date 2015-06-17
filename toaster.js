@@ -1,16 +1,17 @@
 var WebSocketServer = require('ws').Server
 
-var Toaster = function() {
+var Toaster = function(config) {
 	this.wss = null;
+	this.port = config.port;
 }
 
-Toaster.prototype.openSocket = function(port) {
+Toaster.prototype.openSocket = function() {
 	if (null != this.wss) {
 		this.wss.close();
 	}
 
 	this.wss = new WebSocketServer({
-		port : port
+		port : this.port
 	});
 
 	this.wss.on('connection', function(ws) {
@@ -20,6 +21,8 @@ Toaster.prototype.openSocket = function(port) {
 			console.log('received: %s', message);
 		});
 
+		// TODO have an issue with reloading page not closing socket then interval
+		// not being stopped
 		var id = setInterval(function() {
 			sendState(ws);
 		}, 100);
@@ -31,11 +34,13 @@ Toaster.prototype.openSocket = function(port) {
 		});
 	});
 
+	var count = 0;
 	function sendState(ws) {
 		ws.send(JSON.stringify({
-			x : Math.random(),
-			y : Math.random()
+			x : count,
+			y : count
 		}));
+		count++;
 	}
 }
 

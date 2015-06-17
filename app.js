@@ -58,7 +58,9 @@ app.use(function(err, req, res, next) {
 });
 
 // Start the toaster websocket
-var toaster = new Toaster();
-toaster.openSocket(8080);
+var toaster = new Toaster({
+	port : 8080
+});
+toaster.openSocket();
 
 module.exports = app;
