@@ -14,6 +14,7 @@ Toaster.prototype.openSocket = function() {
 		port : this.port
 	});
 
+	var count = 0;
 	this.wss.on('connection', function(ws) {
 
 		// TODO do we need on message?
@@ -31,14 +32,15 @@ Toaster.prototype.openSocket = function() {
 		ws.on('close', function() {
 			console.log('stopping client interval');
 			clearInterval(id);
+			count = 0;
 		});
 	});
 
-	var count = 0;
 	function sendState(ws) {
 		ws.send(JSON.stringify({
-			x : count,
-			y : count
+			properties : [ 'x', 'y' ],
+			x : count / 100,
+			y : count / 100
 		}));
 		count++;
 	}

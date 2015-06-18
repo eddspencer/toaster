@@ -3,7 +3,17 @@ body {
 }
 
 canvas {
-	width: 100%;
 	background-color: white;
 	border: solid 1px black;
+}
+
+.spanLabel {
+	min-width: 100px;
+	display: inline-block;
+	text-indent: 10px;
+	line-height: 40px;
+}
+
+#scale {
+	width: 50px;
 }

@@ -6,27 +6,20 @@ block content
   canvas(id="draw", resize="true")
   
   div
+    span(class="spanLabel") Actions
     button(class="btn btn-default", id="start") Start
     button(class="btn btn-default", id="stop") Stop
+  div
+    span(class="spanLabel") Scale (m)
+    input(id="scale", type="number", value="1")
+    
   
   h2 Current State
   
-  table(class="table-condensed table-bordered")
+  table(class="table-condensed table-bordered", id="properties")
     tr
       th Property
       th Value
-    tr
-      td X
-      td(id="x") 
-    tr
-      td Y
-      td(id="y")
-    tr
-      td dx
-      td(id="dx")
-    tr
-      td dx
-      td(id="dy")
       
   script(type="text/javascript", src="javascripts/lazywebsocket.js")
   script(type="text/javascript", src="javascripts/canvas.js", host=host, canvas="draw")
