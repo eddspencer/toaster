@@ -17,7 +17,7 @@
 		socket.onmessage = function(msg) {
 			var currentState = JSON.parse(msg.data);
 			updateState(currentState);
-			redraw(currentState.dx, currentState.dy, currentState.sensors);
+			redraw(currentState.x, currentState.y, currentState.dx, currentState.dy, currentState.sensors);
 		}
 
 		return socket;
@@ -71,10 +71,26 @@
 		return value * s;
 	}
 
-	function redraw(dx, dy, sensors) {
-		var canvas = context.canvas;
+	function translateAndScale(x, y) {
+		return {
+			x : context.canvas.width / 2 + scaleValue(x),
+			y : context.canvas.height - (context.canvas.height / 2 + scaleValue(y))
+		}
+	}
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
+	function redraw(x, y, dx, dy, sensors) {
+		context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+		var theta = Math.atan2(dy, dx);
+		var translated = translateAndScale(x, y);
+
+		drawPath();
+		drawSensors(translated.x, translated.y, theta, sensors);
+		drawRobot(translated.x, translated.y, theta);
+	}
+
+	function drawPath() {
+		var canvas = context.canvas;
 
 		context.strokeStyle = drawConfig.pathColour;
 		context.lineJoin = "round";
@@ -83,25 +99,30 @@
 		var path = new Path2D();
 		path.moveTo(canvas.width / 2, canvas.height / 2);
 
-		var x = 0;
-		var y = 0;
 		for (var i = 0; i < xPath.length; i++) {
 			// Calculate x and y coordinates for canvas centred in middle with
 			// inverted y-axis
-			x = canvas.width / 2 + scaleValue(xPath[i]);
-			y = canvas.height - (canvas.height / 2 + scaleValue(yPath[i]));
-			path.lineTo(x, y);
+			var translated = translateAndScale(xPath[i], yPath[i]);
+			path.lineTo(translated.x, translated.y);
 		}
 
 		context.stroke(path);
-		drawRobot(x, y, dx, dy, sensors);
 	}
 
-	function drawRobot(x, y, dx, dy, sensors) {
+	function drawRobot(x, y, theta) {
 		var width = scaleValue(0.05);
 		var length = scaleValue(0.1);
 
-		drawRotated(x, y, Math.atan2(dy, dx), function() {
+		drawRotated(x, y, theta, function() {
+			var pathRobot = new Path2D();
+			pathRobot.rect(-width / 2, -length / 2, width, length);
+			context.fillStyle = drawConfig.robotColour;
+			context.fill(pathRobot);
+		});
+	}
+
+	function drawSensors(x, y, theta, sensors) {
+		drawRotated(x, y, theta, function() {
 			sensors.forEach(function(sensor) {
 				drawRotated(sensor.x, sensor.y, sensor.theta, function() {
 					var pathSensor = new Path2D();
@@ -116,22 +137,17 @@
 					context.stroke(pathSensor, '#FF0000');
 				});
 			});
-
-			var pathRobot = new Path2D();
-			pathRobot.rect(-width / 2, -length / 2, width, length);
-			context.fillStyle = drawConfig.robotColour;
-			context.fill(pathRobot);
 		});
+	}
 
-		function drawRotated(x, y, theta, drawFunction) {
-			context.save();
-			context.translate(x, y);
-			context.rotate(theta);
+	function drawRotated(x, y, theta, drawFunction) {
+		context.save();
+		context.translate(x, y);
+		context.rotate(theta);
 
-			drawFunction();
+		drawFunction();
 
-			context.restore();
-		}
+		context.restore();
 	}
 
 	$('#start').click(function(event) {
