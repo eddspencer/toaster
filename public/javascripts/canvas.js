@@ -101,33 +101,37 @@
 		var width = scaleValue(0.05);
 		var length = scaleValue(0.1);
 
-		context.save();
-		context.translate(x, y);
-		context.rotate(Math.atan2(dy, dx));
-
-		sensors
-				.forEach(function(sensor) {
-					context.save();
-					context.translate(sensor.x, sensor.y);
-					context.rotate(sensor.theta);
-
+		drawRotated(x, y, Math.atan2(dy, dx), function() {
+			sensors.forEach(function(sensor) {
+				drawRotated(sensor.x, sensor.y, sensor.theta, function() {
 					var pathSensor = new Path2D();
 					pathSensor.moveTo(scaleValue(sensor.x), scaleValue(sensor.y));
-					pathSensor.lineTo(scaleValue(sensor.distance * Math.cos(sensor.theta)), scaleValue(sensor.distance
-							* Math.sin(sensor.theta)));
+
+					var dx = sensor.distance * Math.cos(sensor.theta);
+					var dy = sensor.distance * Math.sin(sensor.theta);
+					pathSensor.lineTo(scaleValue(dx), scaleValue(dy));
+
 					context.strokeStyle = drawConfig.sensorColour;
 					context.lineWidth = 2 / scale;
 					context.stroke(pathSensor, '#FF0000');
-
-					context.restore();
 				});
+			});
 
-		var pathRobot = new Path2D();
-		pathRobot.rect(-width / 2, -length / 2, width, length);
-		context.fillStyle = drawConfig.robotColour;
-		context.fill(pathRobot);
+			var pathRobot = new Path2D();
+			pathRobot.rect(-width / 2, -length / 2, width, length);
+			context.fillStyle = drawConfig.robotColour;
+			context.fill(pathRobot);
+		});
 
-		context.restore();
+		function drawRotated(x, y, theta, drawFunction) {
+			context.save();
+			context.translate(x, y);
+			context.rotate(theta);
+
+			drawFunction();
+
+			context.restore();
+		}
 	}
 
 	$('#start').click(function(event) {
