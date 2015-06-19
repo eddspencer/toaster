@@ -12,7 +12,6 @@ block content
   div
     span(class="spanLabel") Scale (m)
     input(id="scale", type="number", value="1")
-    
   
   h2 Current State
   
@@ -20,6 +19,13 @@ block content
     tr
       th Property
       th Value
+      
+  h3 Sensor readings
+  
+  table(class="table-condensed table-bordered", id="sensors")
+    tr
+      th Name
+      th Distance(m)
       
   script(type="text/javascript", src="javascripts/lazywebsocket.js")
   script(type="text/javascript", src="javascripts/canvas.js", host=host, canvas="draw")

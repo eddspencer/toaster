@@ -39,10 +39,23 @@ Toaster.prototype.openSocket = function() {
 	function sendState(ws) {
 		ws.send(JSON.stringify({
 			properties : [ 'x', 'y' ],
+			sensors : [ new MockSensor('Right', 0, 0, 0), new MockSensor('Left', 0, 0, Math.PI / 2) ],
 			x : count / 100,
-			y : count / 100
+			y : count / 100,
+			dx : 0.01,
+			dy : 0.01
 		}));
 		count++;
+	}
+
+	var MockSensor = function(id, x, y, theta) {
+		return {
+			id: id,
+			x : x,
+			y : y,
+			theta : theta,
+			distance : Math.random() / 10
+		}
 	}
 }
 

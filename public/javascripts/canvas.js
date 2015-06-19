@@ -5,13 +5,19 @@
 	var xPath, yPath = null;
 	var scale = 1;
 
+	var drawConfig = {
+		pathColour : "#000000",
+		robotColour : "#0000FF",
+		sensorColour : "#FF0000"
+	}
+
 	function initSocket(host) {
 		var socket = new LazyWebSocket('ws://' + host);
 
 		socket.onmessage = function(msg) {
 			var currentState = JSON.parse(msg.data);
 			updateState(currentState);
-			redraw();
+			redraw(currentState.dx, currentState.dy, currentState.sensors);
 		}
 
 		return socket;
@@ -20,10 +26,6 @@
 	function initCanvas(canvasId) {
 		var canvas = document.getElementById(canvasId);
 		var context = canvas.getContext("2d");
-
-		context.strokeStyle = "#df4b26";
-		context.lineJoin = "round";
-		context.lineWidth = 5;
 
 		var lenght = 600 // canvas.parentElement.clientWidth;
 		canvas.width = lenght;
@@ -37,45 +39,95 @@
 		xPath.push(currentState.x);
 		yPath.push(currentState.y);
 
-		// Update the table data
-		currentState.properties
-				.forEach(function(item) {
-					var value = currentState[item];
-					if (undefined != value) {
-						if ($('#properties').find('#state' + item).length > 0) {
-							$('#state' + item).html(value);
-						} else {
-							$('#properties > tbody:last-child').append(
-									'<tr><td>' + item + '</td><td id="state' + item + '">' + value + '</td></tr>');
-						}
-					}
-				});
+		// Update the properties
+		currentState.properties.forEach(function(item) {
+			var value = currentState[item];
+			if (undefined != value) {
+				createOrUpdateTableRow('properties', 'state', item, value);
+			}
+		});
+
+		// Update the sensor information
+		currentState.sensors.forEach(function(sensor) {
+			createOrUpdateTableRow('sensors', 'sensor', sensor.id, sensor.distance);
+		});
+
+		function createOrUpdateTableRow(tableId, prefix, key, value) {
+			var id = prefix + key;
+			if ($('#' + tableId).find('#' + id).length > 0) {
+				$('#' + id).html(value);
+			} else {
+				$('#' + tableId + ' > tbody:last-child').append('<tr><td>' + key + '</td><td id="' + id + '">' + value + '</td></tr>');
+			}
+		}
 	}
 
-	function redraw(x, y) {
-		var canvas = context.canvas;
+	/**
+	 * Scale the value (in metres) to the specific scale which is number of meters
+	 * in canvas
+	 */
+	function scaleValue(value) {
+		var s = context.canvas.height / scale;
+		return value * s;
+	}
 
-		/**
-		 * Scale the value (in metres) to the specific scale which is number of meters in canvas
-		 */
-		function scaleValue(value) {
-			var s = canvas.height / 2;
-			return value * s;
-		}
+	function redraw(dx, dy, sensors) {
+		var canvas = context.canvas;
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
-		context.beginPath();
-		context.moveTo(canvas.width / 2, canvas.height / 2);
+		context.strokeStyle = drawConfig.pathColour;
+		context.lineJoin = "round";
+		context.lineWidth = 5 / scale;
 
+		var path = new Path2D();
+		path.moveTo(canvas.width / 2, canvas.height / 2);
+
+		var x = 0;
+		var y = 0;
 		for (var i = 0; i < xPath.length; i++) {
-			var x = canvas.width / 2 + scaleValue(xPath[i]);
-			var y = canvas.height / 2 + scaleValue(yPath[i]);
-			context.lineTo(x, y);
+			// Calculate x and y coordinates for canvas centred in middle with
+			// inverted y-axis
+			x = canvas.width / 2 + scaleValue(xPath[i]);
+			y = canvas.height - (canvas.height / 2 + scaleValue(yPath[i]));
+			path.lineTo(x, y);
 		}
 
-		context.closePath();
-		context.stroke();
+		context.stroke(path);
+		drawRobot(x, y, dx, dy, sensors);
+	}
+
+	function drawRobot(x, y, dx, dy, sensors) {
+		var width = scaleValue(0.05);
+		var length = scaleValue(0.1);
+
+		context.save();
+		context.translate(x, y);
+		context.rotate(Math.atan2(dy, dx));
+
+		sensors
+				.forEach(function(sensor) {
+					context.save();
+					context.translate(sensor.x, sensor.y);
+					context.rotate(sensor.theta);
+
+					var pathSensor = new Path2D();
+					pathSensor.moveTo(scaleValue(sensor.x), scaleValue(sensor.y));
+					pathSensor.lineTo(scaleValue(sensor.distance * Math.cos(sensor.theta)), scaleValue(sensor.distance
+							* Math.sin(sensor.theta)));
+					context.strokeStyle = drawConfig.sensorColour;
+					context.lineWidth = 2 / scale;
+					context.stroke(pathSensor, '#FF0000');
+
+					context.restore();
+				});
+
+		var pathRobot = new Path2D();
+		pathRobot.rect(-width / 2, -length / 2, width, length);
+		context.fillStyle = drawConfig.robotColour;
+		context.fill(pathRobot);
+
+		context.restore();
 	}
 
 	$('#start').click(function(event) {
@@ -87,7 +139,7 @@
 	$('#stop').click(function(event) {
 		socket.close();
 	});
-	
+
 	$('#scale').change(function(event) {
 		scale = event.currentTarget.value;
 	});
