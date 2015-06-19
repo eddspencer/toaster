@@ -14,25 +14,27 @@ Toaster.prototype.openSocket = function() {
 		port : this.port
 	});
 
+	var id = 0;
 	var count = 0;
 	this.wss.on('connection', function(ws) {
+		
+		// TODO on connect start sending data but only MOVE robot on message
 
-		// TODO do we need on message?
 		ws.on('message', function(message) {
-			console.log('received: %s', message);
-		});
-
-		// TODO have an issue with reloading page not closing socket then interval
-		// not being stopped
-		var id = setInterval(function() {
-			sendState(ws);
-		}, 100);
-		console.log('started client interval');
-
-		ws.on('close', function() {
-			console.log('stopping client interval');
-			clearInterval(id);
-			count = 0;
+			switch (message) {
+			case "START":
+				id = setInterval(function() {
+					sendState(ws);
+				}, 100);
+				console.log('started client interval');
+				break;
+			case "STOP":
+				console.log('stopping client interval');
+				clearInterval(id);
+				break;
+			default:
+				console.error('Unhandled message: %s', message);
+			}
 		});
 	});
 
@@ -50,7 +52,7 @@ Toaster.prototype.openSocket = function() {
 
 	var MockSensor = function(id, x, y, theta) {
 		return {
-			id: id,
+			id : id,
 			x : x,
 			y : y,
 			theta : theta,

@@ -8,7 +8,7 @@ function LazyWebSocket(url) {
 	var ws = null;
 
 	this.open = function() {
-		if (null == ws) {
+		if (!isOpen()) {
 			ws = new WebSocket(url);
 			ws.onmessage = this.onmessage;
 			ws.onopen = this.onopen;
@@ -23,18 +23,23 @@ function LazyWebSocket(url) {
 		}
 	}
 
+	function isOpen() {
+		return null != ws;
+	}
+	this.isOpen = isOpen;
+
 	this.close = function() {
-		if (null != ws) {
+		if (isOpen) {
 			ws.close();
 			ws = null;
 		}
 	}
 
 	this.send = function(msg) {
-		if (null == ws) {
-			console.error("Socket not open");
-		} else {
+		if (isOpen()) {
 			ws.send(msg);
+		} else {
+			console.error("Socket not open");
 		}
 	}
 

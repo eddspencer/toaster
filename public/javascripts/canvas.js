@@ -150,14 +150,24 @@
 		context.restore();
 	}
 
-	$('#start').click(function(event) {
-		socket.open();
+	$('#connect').click(function(event) {
+		if (socket.isOpen()) {
+			socket.close();
+			$('#connect').text("Connect");
+		} else {
+			socket.open();
+			$('#connect').text("Disconnect");
+		}
 		xPath = new Array();
 		yPath = new Array();
 	});
 
+	$('#start').click(function(event) {
+		socket.send('START');
+	});
+
 	$('#stop').click(function(event) {
-		socket.close();
+		socket.send('STOP');
 	});
 
 	$('#scale').change(function(event) {
