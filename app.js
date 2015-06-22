@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var Toaster = require('./toaster.js');
 var routes = require('./routes/index');
 
+var MockBot = require('./mockbot.js');
+
 var app = express();
 
 // view engine setup
@@ -59,7 +61,8 @@ app.use(function(err, req, res, next) {
 
 // Start the toaster websocket
 var toaster = new Toaster({
-	port : 8080
+	port : 8080,
+	bot: new MockBot()
 });
 toaster.openSocket();
 

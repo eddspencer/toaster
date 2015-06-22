@@ -150,6 +150,8 @@
 		context.restore();
 	}
 
+	// TODO could use rxJS here....
+	// TODO what about sockets and rxJS?
 	$('#connect').click(function(event) {
 		if (socket.isOpen()) {
 			socket.close();
