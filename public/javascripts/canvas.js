@@ -8,7 +8,8 @@
 	var drawConfig = {
 		pathColour : "#000000",
 		robotColour : "#0000FF",
-		sensorColour : "#FF0000"
+		sensorColour : "#FF0000",
+		sensorConeTheta : Math.PI / 32
 	}
 
 	function initSocket(host) {
@@ -131,13 +132,13 @@
 					var pathSensor = new Path2D();
 					pathSensor.moveTo(0, 0);
 
-					// var dx = scaleValue(sensor.distance * Math.cos(sensor.theta));
-					// var dy = scaleValue(sensor.distance * Math.sin(sensor.theta));
-					pathSensor.lineTo(sensorX + scaleValue(sensor.distance), 0);
+					var h = sensorX + scaleValue(sensor.distance);
 
-					context.strokeStyle = drawConfig.sensorColour;
-					context.lineWidth = 2 / scale;
-					context.stroke(pathSensor, '#FF0000');
+					pathSensor.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
+					pathSensor.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
+
+					context.fillStyle = drawConfig.sensorColour;
+					context.fill(pathSensor);
 				});
 			});
 		});
