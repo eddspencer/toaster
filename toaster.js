@@ -26,7 +26,7 @@ Toaster.prototype.openSocket = function() {
 			case "START":
 				id = setInterval(function() {
 					ws.send(JSON.stringify(bot.currentState()));
-				}, 100);
+				}, 500);
 				console.log('started client interval');
 				break;
 			case "STOP":
@@ -40,6 +40,7 @@ Toaster.prototype.openSocket = function() {
 
 		ws.on('close', function() {
 			bot.reset();
+			clearInterval(id);
 		});
 	});
 

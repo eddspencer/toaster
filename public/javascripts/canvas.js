@@ -85,8 +85,8 @@
 		var translated = translateAndScale(x, y);
 
 		drawPath();
-		drawSensors(translated.x, translated.y, theta, sensors);
 		drawRobot(translated.x, translated.y, theta);
+		drawSensors(translated.x, translated.y, theta, sensors);
 	}
 
 	function drawPath() {
@@ -124,13 +124,16 @@
 	function drawSensors(x, y, theta, sensors) {
 		drawRotated(x, y, theta, function() {
 			sensors.forEach(function(sensor) {
-				drawRotated(sensor.x, sensor.y, sensor.theta, function() {
-					var pathSensor = new Path2D();
-					pathSensor.moveTo(scaleValue(sensor.x), scaleValue(sensor.y));
+				var sensorX = scaleValue(sensor.x);
+				var sensorY = -scaleValue(sensor.y);
 
-					var dx = sensor.distance * Math.cos(sensor.theta);
-					var dy = sensor.distance * Math.sin(sensor.theta);
-					pathSensor.lineTo(scaleValue(dx), scaleValue(dy));
+				drawRotated(sensorX, sensorY, sensor.theta, function() {
+					var pathSensor = new Path2D();
+					pathSensor.moveTo(0, 0);
+
+					// var dx = scaleValue(sensor.distance * Math.cos(sensor.theta));
+					// var dy = scaleValue(sensor.distance * Math.sin(sensor.theta));
+					pathSensor.lineTo(sensorX + scaleValue(sensor.distance), 0);
 
 					context.strokeStyle = drawConfig.sensorColour;
 					context.lineWidth = 2 / scale;
