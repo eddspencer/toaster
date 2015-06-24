@@ -91,8 +91,8 @@
 		var translated = translateAndScale(x, y);
 
 		drawPath();
-		drawRobot(translated.x, translated.y, theta);
 		drawSensors(translated.x, translated.y, theta, sensors);
+		drawRobot(translated.x, translated.y, theta);
 	}
 
 	function drawPath() {
