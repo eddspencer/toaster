@@ -52,6 +52,11 @@
 		currentState.sensors.forEach(function(sensor) {
 			createOrUpdateTableRow('sensors', 'sensor', sensor.id, sensor.distance);
 		});
+		
+		// Update the encoder information
+		currentState.encoders.forEach(function(encoder) {
+			createOrUpdateTableRow('encoders', 'encoder', encoder.id, encoder.voltage);
+		});
 
 		function createOrUpdateTableRow(tableId, prefix, key, value) {
 			var id = prefix + key;

@@ -21,12 +21,21 @@ block content
       th Property
       th Value
       
-  h3 Sensor readings
+  div(class="tableReading")
+    h3 Sensor readings
   
-  table(class="table-condensed table-bordered", id="sensors")
-    tr
-      th Name
-      th Distance(m)
+    table(class="table-condensed table-bordered", id="sensors")
+      tr
+        th Name
+        th Distance(m)
+      
+  div(class="tableReading")
+    h3 Encoder readings
+  
+    table(class="table-condensed table-bordered", id="encoders")
+      tr
+        th Name
+        th Voltage
       
   script(type="text/javascript", src="javascripts/lazywebsocket.js")
   script(type="text/javascript", src="javascripts/canvas.js", host=host, canvas="draw")
