@@ -7,6 +7,7 @@
 
 	var drawConfig = {
 		pathColour : "#000000",
+		pathThickness : 3,
 		robotColour : "#0000FF",
 		sensorColour : "#FF0000",
 		sensorConeTheta : Math.PI / 32
@@ -52,7 +53,7 @@
 		currentState.sensors.forEach(function(sensor) {
 			createOrUpdateTableRow('sensors', 'sensor', sensor.id, sensor.distance);
 		});
-		
+
 		// Update the encoder information
 		currentState.encoders.forEach(function(encoder) {
 			createOrUpdateTableRow('encoders', 'encoder', encoder.id, encoder.voltage);
@@ -100,7 +101,7 @@
 
 		context.strokeStyle = drawConfig.pathColour;
 		context.lineJoin = "round";
-		context.lineWidth = 5 / scale;
+		context.lineWidth = drawConfig.pathThickness / scale;
 
 		var path = new Path2D();
 		path.moveTo(canvas.width / 2, canvas.height / 2);
