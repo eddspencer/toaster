@@ -1,9 +1,8 @@
-(function() {
-	var socket = initSocket(document.currentScript.getAttribute('host'));
-	var context = initCanvas(document.currentScript.getAttribute('canvas'));
-
+var RobotCanvas = function(canvasId) {
+	
 	var xPath, yPath = null;
 	var scale = 1;
+	var context = initCanvas(canvasId);
 
 	var drawConfig = {
 		pathColour : "#000000",
@@ -11,22 +10,6 @@
 		robotColour : "#0000FF",
 		sensorColour : "#FF0000",
 		sensorConeTheta : Math.PI / 32
-	}
-
-	function initSocket(host) {
-		var socket = new LazyWebSocket('ws://' + host);
-
-		socket.onmessage = function(msg) {
-			var msg = JSON.parse(msg.data);
-			if (msg.type === "currentState") {
-				updateState(msg);
-				redraw(msg.x, msg.y, msg.dx, msg.dy, msg.sensors);
-			} else if (msg.type === 'config') {
-				setConfig(msg);
-			}
-		}
-
-		return socket;
 	}
 
 	function initCanvas(canvasId) {
@@ -39,42 +22,15 @@
 
 		return context;
 	}
-	
-	function setConfig(config) {
-		
+
+	function initialise() {
+		xPath = new Array();
+		yPath = new Array();
 	}
 
 	function updateState(currentState) {
-		// Update the path
 		xPath.push(currentState.x);
 		yPath.push(currentState.y);
-
-		// Update the properties
-		currentState.properties.forEach(function(item) {
-			var value = currentState[item];
-			if (undefined != value) {
-				createOrUpdateTableRow('properties', 'state', item, value);
-			}
-		});
-
-		// Update the sensor information
-		currentState.sensors.forEach(function(sensor) {
-			createOrUpdateTableRow('sensors', 'sensor', sensor.id, sensor.distance);
-		});
-
-		// Update the encoder information
-		currentState.encoders.forEach(function(encoder) {
-			createOrUpdateTableRow('encoders', 'encoder', encoder.id, encoder.voltage);
-		});
-
-		function createOrUpdateTableRow(tableId, prefix, key, value) {
-			var id = prefix + key;
-			if ($('#' + tableId).find('#' + id).length > 0) {
-				$('#' + id).html(value);
-			} else {
-				$('#' + tableId + ' > tbody:last-child').append('<tr><td>' + key + '</td><td id="' + id + '">' + value + '</td></tr>');
-			}
-		}
 	}
 
 	/**
@@ -167,35 +123,13 @@
 
 		context.restore();
 	}
+	
+	function setScale(newScale) {
+		scale = newScale;
+	}
 
-	// TODO could use rxJS here....
-	// TODO what about sockets and rxJS?
-	$('#connect').click(function(event) {
-		if (socket.isOpen()) {
-			socket.close();
-			$('#connect').text("Connect");
-		} else {
-			socket.open();
-			$('#connect').text("Disconnect");
-		}
-		xPath = new Array();
-		yPath = new Array();
-	});
-
-	$('#start').click(function(event) {
-		socket.send(JSON.stringify({
-			setBehaviour : 'START'
-		}));
-	});
-
-	$('#stop').click(function(event) {
-		socket.send(JSON.stringify({
-			setBehaviour : 'STOP'
-		}));
-	});
-
-	$('#scale').change(function(event) {
-		scale = event.currentTarget.value;
-	});
-
-}());
+	this.initialise = initialise;
+	this.redraw = redraw;
+	this.updateState = updateState;
+	this.setScale = setScale;
+}

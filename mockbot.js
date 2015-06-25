@@ -20,20 +20,21 @@ var MockSensor = function(id, x, y, theta) {
 
 var BehaviourEnum = Object.freeze({
 	START : 'START',
-	STOP : 'STOP',
-	values : function() {
-		Object.keys(this).forEach(function(key) {
-			return this[key];
-		})
-	}
+	STOP : 'STOP'
 })
+
+function values(obj) {
+	return Object.keys(obj).map(function(key) {
+		return obj[key];
+	})
+}
 
 var MockBot = function() {
 	this.count = 0;
 	this.behaviour = BehaviourEnum.STOP;
 
 	this.config = {
-		behaviours : BehaviourEnum.values()
+		behaviours : values(BehaviourEnum)
 	}
 }
 

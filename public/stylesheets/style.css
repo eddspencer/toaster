@@ -22,3 +22,7 @@ canvas {
 #scale {
 	width: 50px;
 }
+
+#behaviours input {
+	margin: 5px;
+}
