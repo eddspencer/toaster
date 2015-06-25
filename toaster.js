@@ -19,26 +19,31 @@ Toaster.prototype.openSocket = function() {
 	var bot = this.bot;
 	this.wss.on('connection', function(ws) {
 
-		// TODO on connect start sending data but only MOVE robot on message
+		// On start of connection send initial bot configuration
+		var config = bot.config;
+		config.type = 'config';
+		ws.send(JSON.stringify(config));
+
+		// Set up timer to sennd current state of bot to client
+		id = setInterval(function() {
+			var currentState = bot.currentState();
+			currentState.type = 'currentState';
+			ws.send(JSON.stringify(currentState));
+		}, 500);
+
+		console.log('started client interval');
 
 		ws.on('message', function(message) {
-			switch (message) {
-			case "START":
-				id = setInterval(function() {
-					ws.send(JSON.stringify(bot.currentState()));
-				}, 500);
-				console.log('started client interval');
-				break;
-			case "STOP":
-				console.log('stopping client interval');
-				clearInterval(id);
-				break;
-			default:
-				console.error('Unhandled message: %s', message);
+			var msg = JSON.parse(message);
+			if ('setBehaviour' in msg) {
+				bot.setBehaviour(msg.setBehaviour);
+			} else {
+				console.error('Unhandled message: %s', msg);
 			}
 		});
 
 		ws.on('close', function() {
+			console.log('stopping client interval');
 			bot.reset();
 			clearInterval(id);
 		});

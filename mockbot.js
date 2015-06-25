@@ -18,8 +18,28 @@ var MockSensor = function(id, x, y, theta) {
 	}
 }
 
+var BehaviourEnum = Object.freeze({
+	START : 'START',
+	STOP : 'STOP',
+	values : function() {
+		Object.keys(this).forEach(function(key) {
+			return this[key];
+		})
+	}
+})
+
 var MockBot = function() {
 	this.count = 0;
+	this.behaviour = BehaviourEnum.STOP;
+
+	this.config = {
+		behaviours : BehaviourEnum.values()
+	}
+}
+
+MockBot.prototype.setBehaviour = function(behaviour) {
+	this.behaviour = behaviour;
+	console.log('Setting behaviour to be ' + behaviour);
 }
 
 MockBot.prototype.currentState = function() {
@@ -43,7 +63,11 @@ MockBot.prototype.currentState = function() {
 		dx : 0.01,
 		dy : 0.01
 	};
-	this.count++;
+
+	// Mimic behaviour logic
+	if (BehaviourEnum.START === this.behaviour) {
+		this.count++;
+	}
 	return currentState;
 }
 

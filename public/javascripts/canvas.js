@@ -17,9 +17,13 @@
 		var socket = new LazyWebSocket('ws://' + host);
 
 		socket.onmessage = function(msg) {
-			var currentState = JSON.parse(msg.data);
-			updateState(currentState);
-			redraw(currentState.x, currentState.y, currentState.dx, currentState.dy, currentState.sensors);
+			var msg = JSON.parse(msg.data);
+			if (msg.type === "currentState") {
+				updateState(msg);
+				redraw(msg.x, msg.y, msg.dx, msg.dy, msg.sensors);
+			} else if (msg.type === 'config') {
+				setConfig(msg);
+			}
 		}
 
 		return socket;
@@ -34,6 +38,10 @@
 		canvas.height = lenght;
 
 		return context;
+	}
+	
+	function setConfig(config) {
+		
 	}
 
 	function updateState(currentState) {
@@ -175,11 +183,15 @@
 	});
 
 	$('#start').click(function(event) {
-		socket.send('START');
+		socket.send(JSON.stringify({
+			setBehaviour : 'START'
+		}));
 	});
 
 	$('#stop').click(function(event) {
-		socket.send('STOP');
+		socket.send(JSON.stringify({
+			setBehaviour : 'STOP'
+		}));
 	});
 
 	$('#scale').change(function(event) {
