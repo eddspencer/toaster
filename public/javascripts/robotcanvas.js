@@ -1,7 +1,8 @@
 var RobotCanvas = function(canvasId) {
-	
+
 	var xPath, yPath = null;
 	var scale = 1;
+	var centre = false;
 	var context = initCanvas(canvasId);
 
 	var drawConfig = {
@@ -37,16 +38,27 @@ var RobotCanvas = function(canvasId) {
 	 * Scale the value (in metres) to the specific scale which is number of meters
 	 * in canvas
 	 */
+	// TODO can likely do this with the canvas scale...
 	function scaleValue(value) {
 		var s = context.canvas.height / scale;
 		return value * s;
 	}
 
+	/**
+	 * Translate the coordinates to be centred on the middle of the canvas and
+	 * handle whether bot should always be centred or not
+	 */
 	function translateAndScale(x, y) {
+		if (centre && 0 != xPath.lenght) {
+			x -= xPath[0];
+			y -= yPath[0];
+		}
+
 		return {
 			x : context.canvas.width / 2 + scaleValue(x),
 			y : context.canvas.height - (context.canvas.height / 2 + scaleValue(y))
 		}
+
 	}
 
 	function redraw(x, y, dx, dy, sensors) {
@@ -71,8 +83,6 @@ var RobotCanvas = function(canvasId) {
 		path.moveTo(canvas.width / 2, canvas.height / 2);
 
 		for (var i = 0; i < xPath.length; i++) {
-			// Calculate x and y coordinates for canvas centred in middle with
-			// inverted y-axis
 			var translated = translateAndScale(xPath[i], yPath[i]);
 			path.lineTo(translated.x, translated.y);
 		}
@@ -123,13 +133,18 @@ var RobotCanvas = function(canvasId) {
 
 		context.restore();
 	}
-	
+
 	function setScale(newScale) {
 		scale = newScale;
+	}
+
+	function setCentre(newCentre) {
+		centre = newCentre;
 	}
 
 	this.initialise = initialise;
 	this.redraw = redraw;
 	this.updateState = updateState;
 	this.setScale = setScale;
+	this.setCentre = setCentre;
 }

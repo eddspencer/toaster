@@ -29,7 +29,7 @@ Toaster.prototype.openSocket = function() {
 			var currentState = bot.currentState();
 			currentState.type = 'currentState';
 			ws.send(JSON.stringify(currentState));
-		}, 500);
+		}, 200);
 
 		console.log('started client interval');
 

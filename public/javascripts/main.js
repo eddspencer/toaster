@@ -82,5 +82,9 @@
 	$('#scale').change(function(event) {
 		robotCanvas.setScale(event.currentTarget.value);
 	});
-
+	
+	$('#centre').change(function(event) {
+		robotCanvas.setCentre("on" === event.currentTarget.value);
+	});
+	
 }());
