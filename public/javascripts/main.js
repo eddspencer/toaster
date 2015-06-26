@@ -24,6 +24,16 @@
 			var id = 'behaviour' + behaviour;
 			$('#behaviours').append('<input id="' + id + '" type="radio" name="behaviours" value="' + behaviour + '">' + behaviour);
 		})
+
+		$('#behaviour' + config.currentBehaviour).prop('checked', true);
+
+		$('input:radio[name="behaviours"]').change(function() {
+			if (this.checked) {
+				socket.send(JSON.stringify({
+					setBehaviour : this.value
+				}));
+			}
+		});
 	}
 
 	function updateState(currentState) {
@@ -71,14 +81,6 @@
 
 	$('#scale').change(function(event) {
 		robotCanvas.setScale(event.currentTarget.value);
-	});
-
-	$('input:radio[name="behaviours"]').change(function() {
-		if (this.checked) {
-			socket.send(JSON.stringify({
-				setBehaviour : this.value
-			}));
-		}
 	});
 
 }());

@@ -19,8 +19,8 @@ var MockSensor = function(id, x, y, theta) {
 }
 
 var BehaviourEnum = Object.freeze({
-	START : 'START',
-	STOP : 'STOP'
+	STOP : 'STOP',
+	START : 'START'
 })
 
 function values(obj) {
@@ -34,6 +34,7 @@ var MockBot = function() {
 	this.behaviour = BehaviourEnum.STOP;
 
 	this.config = {
+		currentBehaviour : this.behaviour,
 		behaviours : values(BehaviourEnum)
 	}
 }
