@@ -49,6 +49,7 @@ var RobotCanvas = function(canvasId) {
 	 * handle whether bot should always be centred or not
 	 */
 	function translateAndScale(x, y) {
+		// TODO do this in canvas
 		if (centre && 0 != xPath.lenght) {
 			x -= xPath[0];
 			y -= yPath[0];
