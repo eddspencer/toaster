@@ -62,8 +62,12 @@ var MockBot = function () {
       dx: 0.01,
       dy: 0.01,
       obstacles: [
-        obstacles.createRectangle('1', '10', '10')
-      ]
+        obstacles.createRectangle('1', 10, 10)
+      ],
+      goal: {
+        x: 50,
+        y: 50
+      }
     };
 
     // Mimic behaviour logic

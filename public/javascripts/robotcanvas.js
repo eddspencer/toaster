@@ -1,6 +1,6 @@
 var RobotCanvas = function (canvasId) {
 
-  var xPath, yPath, obstacles = null;
+  var xPath, yPath = null;
   var scale = 1;
   var centre = false;
   var context = initCanvas(canvasId);
@@ -11,7 +11,9 @@ var RobotCanvas = function (canvasId) {
     robotColour: "#0000FF",
     obstacleColour: "#0000EE",
     sensorColour: "#FF0000",
-    sensorConeTheta: Math.PI / 32
+    sensorConeTheta: Math.PI / 32,
+    goalColour: "#DD0000",
+    goalThickness: 5
   };
 
   function initCanvas(canvasId) {
@@ -34,7 +36,6 @@ var RobotCanvas = function (canvasId) {
   function updateState(currentState) {
     xPath.push(currentState.x);
     yPath.push(currentState.y);
-    obstacles = currentState.obstacles;
   }
 
   /**
@@ -64,16 +65,17 @@ var RobotCanvas = function (canvasId) {
     }
   }
 
-  function redraw(x, y, dx, dy, sensors) {
+  function redraw(state) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-    var theta = Math.atan2(dy, dx);
-    var translated = translateAndScale(x, y);
+    var theta = Math.atan2(state.dy, state.dx);
+    var translated = translateAndScale(state.x, state.y);
 
     drawPath();
-    drawSensors(translated.x, translated.y, theta, sensors);
+    drawSensors(translated.x, translated.y, theta, state.sensors);
     drawRobot(translated.x, translated.y, theta);
-    drawObsacles();
+    drawObstacles(state.obstacles);
+    drawGoal(state.goal);
   }
 
   function drawPath() {
@@ -95,6 +97,7 @@ var RobotCanvas = function (canvasId) {
   }
 
   function drawRobot(x, y, theta) {
+    // TODO configure the robtot size
     var width = scaleValue(0.05);
     var length = scaleValue(0.1);
 
@@ -128,7 +131,14 @@ var RobotCanvas = function (canvasId) {
     });
   }
 
-  function drawObsacles() {
+  function drawGoal(goal) {
+    var path = new Path2D();
+    path.rect(goal.x, goal.y, drawConfig.goalThickness, drawConfig.goalThickness);
+    context.fillStyle = drawConfig.goalColour;
+    context.fill(path);
+  }
+
+  function drawObstacles(obstacles) {
     obstacles.forEach(function (obstacle) {
       switch (obstacle.type) {
         case 'Rectangle' :

@@ -10,7 +10,7 @@
 			if (msg.type === "currentState") {
 				updateState(msg);
 				robotCanvas.updateState(msg);
-				robotCanvas.redraw(msg.x, msg.y, msg.dx, msg.dy, msg.sensors);
+				robotCanvas.redraw(msg);
 			} else if (msg.type === 'config') {
 				setConfig(msg);
 			}
