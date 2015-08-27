@@ -1,6 +1,6 @@
 var RobotCanvas = function (canvasId) {
 
-  var xPath, yPath = null;
+  var xPath, yPath, obstacles = null;
   var scale = 1;
   var centre = false;
   var context = initCanvas(canvasId);
@@ -9,6 +9,7 @@ var RobotCanvas = function (canvasId) {
     pathColour: "#000000",
     pathThickness: 3,
     robotColour: "#0000FF",
+    obstacleColour: "#0000EE",
     sensorColour: "#FF0000",
     sensorConeTheta: Math.PI / 32
   };
@@ -27,11 +28,13 @@ var RobotCanvas = function (canvasId) {
   function initialise() {
     xPath = [];
     yPath = [];
+    obstacles = [];
   }
 
   function updateState(currentState) {
     xPath.push(currentState.x);
     yPath.push(currentState.y);
+    obstacles = currentState.obstacles;
   }
 
   /**
@@ -50,7 +53,7 @@ var RobotCanvas = function (canvasId) {
    */
   function translateAndScale(x, y) {
     // TODO do this in canvas
-    if (centre && 0 != xPath.lenght) {
+    if (centre && 0 != xPath.length) {
       x -= xPath[0];
       y -= yPath[0];
     }
@@ -70,6 +73,7 @@ var RobotCanvas = function (canvasId) {
     drawPath();
     drawSensors(translated.x, translated.y, theta, sensors);
     drawRobot(translated.x, translated.y, theta);
+    drawObsacles();
   }
 
   function drawPath() {
@@ -121,6 +125,21 @@ var RobotCanvas = function (canvasId) {
           context.fill(pathSensor);
         });
       });
+    });
+  }
+
+  function drawObsacles() {
+    obstacles.forEach(function (obstacle) {
+      switch (obstacle.type) {
+        case 'Rectangle' :
+          var pathRobot = new Path2D();
+          pathRobot.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.length);
+          context.fillStyle = drawConfig.obstacleColour;
+          context.fill(pathRobot);
+          break;
+        default:
+          console.log('Unknown obstacle type: ' + obstacle);
+      }
     });
   }
 

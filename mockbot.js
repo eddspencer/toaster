@@ -1,6 +1,9 @@
 /**
  * Mock robot with state for use in testing
  */
+
+var obstacles = require('./mockobstacle');
+
 var MockEncoder = function (id) {
   return {
     id: id,
@@ -18,15 +21,14 @@ var MockSensor = function (id, x, y, theta) {
   }
 };
 
-var BehaviourEnum = Object.freeze({
+var behaviourTypes = Object.freeze({
   STOP: 'STOP',
   START: 'START'
 });
 
-
 var MockBot = function () {
   var count = 0;
-  var behaviour = BehaviourEnum.STOP;
+  var behaviour = behaviourTypes.STOP;
 
   var values = function (obj) {
     return Object.keys(obj).map(function (key) {
@@ -58,11 +60,14 @@ var MockBot = function () {
       x: count / 100,
       y: count / 100,
       dx: 0.01,
-      dy: 0.01
+      dy: 0.01,
+      obstacles: [
+        obstacles.createRectangle('1', '10', '10')
+      ]
     };
 
     // Mimic behaviour logic
-    if (BehaviourEnum.START === behaviour) {
+    if (behaviourTypes.START === behaviour) {
       count++;
     }
     return currentState;
@@ -75,7 +80,7 @@ var MockBot = function () {
   return {
     config: {
       currentBehaviour: behaviour,
-      behaviours: values(BehaviourEnum)
+      behaviours: values(behaviourTypes)
     },
     setBehaviour: setBehaviour,
     currentState: currentState,
