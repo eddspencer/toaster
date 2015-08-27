@@ -5,8 +5,8 @@
 	function initSocket(host) {
 		var socket = new LazyWebSocket('ws://' + host);
 
-		socket.onmessage = function(msg) {
-			var msg = JSON.parse(msg.data);
+		socket.onmessage = function(msgStr) {
+			var msg = JSON.parse(msgStr.data);
 			if (msg.type === "currentState") {
 				updateState(msg);
 				robotCanvas.updateState(msg);
@@ -14,7 +14,7 @@
 			} else if (msg.type === 'config') {
 				setConfig(msg);
 			}
-		}
+		};
 
 		return socket;
 	}
@@ -23,7 +23,7 @@
 		config.behaviours.forEach(function(behaviour) {
 			var id = 'behaviour' + behaviour;
 			$('#behaviours').append('<input id="' + id + '" type="radio" name="behaviours" value="' + behaviour + '">' + behaviour);
-		})
+		});
 
 		$('#behaviour' + config.currentBehaviour).prop('checked', true);
 
@@ -67,7 +67,7 @@
 
 	// TODO could use rxJS here....
 	// TODO what about sockets and rxJS?
-	$('#connect').click(function(event) {
+	$('#connect').click(function() {
 		if (socket.isOpen()) {
 			socket.close();
 			$('#connect').text("Connect");

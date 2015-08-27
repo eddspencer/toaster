@@ -1,151 +1,152 @@
-var RobotCanvas = function(canvasId) {
+var RobotCanvas = function (canvasId) {
 
-	var xPath, yPath = null;
-	var scale = 1;
-	var centre = false;
-	var context = initCanvas(canvasId);
+  var xPath, yPath = null;
+  var scale = 1;
+  var centre = false;
+  var context = initCanvas(canvasId);
 
-	var drawConfig = {
-		pathColour : "#000000",
-		pathThickness : 3,
-		robotColour : "#0000FF",
-		sensorColour : "#FF0000",
-		sensorConeTheta : Math.PI / 32
-	}
+  var drawConfig = {
+    pathColour: "#000000",
+    pathThickness: 3,
+    robotColour: "#0000FF",
+    sensorColour: "#FF0000",
+    sensorConeTheta: Math.PI / 32
+  };
 
-	function initCanvas(canvasId) {
-		var canvas = document.getElementById(canvasId);
-		var context = canvas.getContext("2d");
+  function initCanvas(canvasId) {
+    var canvas = document.getElementById(canvasId);
+    var context = canvas.getContext("2d");
 
-		var lenght = 600 // canvas.parentElement.clientWidth;
-		canvas.width = lenght;
-		canvas.height = lenght;
+    var length = 400; // canvas.parentElement.clientWidth;
+    canvas.width = length;
+    canvas.height = length;
 
-		return context;
-	}
+    return context;
+  }
 
-	function initialise() {
-		xPath = new Array();
-		yPath = new Array();
-	}
+  function initialise() {
+    xPath = [];
+    yPath = [];
+  }
 
-	function updateState(currentState) {
-		xPath.push(currentState.x);
-		yPath.push(currentState.y);
-	}
+  function updateState(currentState) {
+    xPath.push(currentState.x);
+    yPath.push(currentState.y);
+  }
 
-	/**
-	 * Scale the value (in metres) to the specific scale which is number of meters
-	 * in canvas
-	 */
-	// TODO can likely do this with the canvas scale...
-	function scaleValue(value) {
-		var s = context.canvas.height / scale;
-		return value * s;
-	}
+  /**
+   * Scale the value (in metres) to the specific scale which is number of meters
+   * in canvas
+   */
+  // TODO can likely do this with the canvas scale...
+  function scaleValue(value) {
+    var s = context.canvas.height / scale;
+    return value * s;
+  }
 
-	/**
-	 * Translate the coordinates to be centred on the middle of the canvas and
-	 * handle whether bot should always be centred or not
-	 */
-	function translateAndScale(x, y) {
-		// TODO do this in canvas
-		if (centre && 0 != xPath.lenght) {
-			x -= xPath[0];
-			y -= yPath[0];
-		}
+  /**
+   * Translate the coordinates to be centred on the middle of the canvas and
+   * handle whether bot should always be centred or not
+   */
+  function translateAndScale(x, y) {
+    // TODO do this in canvas
+    if (centre && 0 != xPath.lenght) {
+      x -= xPath[0];
+      y -= yPath[0];
+    }
 
-		return {
-			x : context.canvas.width / 2 + scaleValue(x),
-			y : context.canvas.height - (context.canvas.height / 2 + scaleValue(y))
-		}
+    return {
+      x: context.canvas.width / 2 + scaleValue(x),
+      y: context.canvas.height - (context.canvas.height / 2 + scaleValue(y))
+    }
+  }
 
-	}
+  function redraw(x, y, dx, dy, sensors) {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-	function redraw(x, y, dx, dy, sensors) {
-		context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    var theta = Math.atan2(dy, dx);
+    var translated = translateAndScale(x, y);
 
-		var theta = Math.atan2(dy, dx);
-		var translated = translateAndScale(x, y);
+    drawPath();
+    drawSensors(translated.x, translated.y, theta, sensors);
+    drawRobot(translated.x, translated.y, theta);
+  }
 
-		drawPath();
-		drawSensors(translated.x, translated.y, theta, sensors);
-		drawRobot(translated.x, translated.y, theta);
-	}
+  function drawPath() {
+    var canvas = context.canvas;
 
-	function drawPath() {
-		var canvas = context.canvas;
+    context.strokeStyle = drawConfig.pathColour;
+    context.lineJoin = "round";
+    context.lineWidth = drawConfig.pathThickness / scale;
 
-		context.strokeStyle = drawConfig.pathColour;
-		context.lineJoin = "round";
-		context.lineWidth = drawConfig.pathThickness / scale;
+    var path = new Path2D();
+    path.moveTo(canvas.width / 2, canvas.height / 2);
 
-		var path = new Path2D();
-		path.moveTo(canvas.width / 2, canvas.height / 2);
+    for (var i = 0; i < xPath.length; i++) {
+      var translated = translateAndScale(xPath[i], yPath[i]);
+      path.lineTo(translated.x, translated.y);
+    }
 
-		for (var i = 0; i < xPath.length; i++) {
-			var translated = translateAndScale(xPath[i], yPath[i]);
-			path.lineTo(translated.x, translated.y);
-		}
+    context.stroke(path);
+  }
 
-		context.stroke(path);
-	}
+  function drawRobot(x, y, theta) {
+    var width = scaleValue(0.05);
+    var length = scaleValue(0.1);
 
-	function drawRobot(x, y, theta) {
-		var width = scaleValue(0.05);
-		var length = scaleValue(0.1);
+    drawRotated(x, y, theta, function () {
+      var pathRobot = new Path2D();
+      pathRobot.rect(-width / 2, -length / 2, width, length);
+      context.fillStyle = drawConfig.robotColour;
+      context.fill(pathRobot);
+    });
+  }
 
-		drawRotated(x, y, theta, function() {
-			var pathRobot = new Path2D();
-			pathRobot.rect(-width / 2, -length / 2, width, length);
-			context.fillStyle = drawConfig.robotColour;
-			context.fill(pathRobot);
-		});
-	}
+  function drawSensors(x, y, theta, sensors) {
+    drawRotated(x, y, theta, function () {
+      sensors.forEach(function (sensor) {
+        var sensorX = scaleValue(sensor.x);
+        var sensorY = -scaleValue(sensor.y);
 
-	function drawSensors(x, y, theta, sensors) {
-		drawRotated(x, y, theta, function() {
-			sensors.forEach(function(sensor) {
-				var sensorX = scaleValue(sensor.x);
-				var sensorY = -scaleValue(sensor.y);
+        drawRotated(sensorX, sensorY, sensor.theta, function () {
+          var pathSensor = new Path2D();
+          pathSensor.moveTo(0, 0);
 
-				drawRotated(sensorX, sensorY, sensor.theta, function() {
-					var pathSensor = new Path2D();
-					pathSensor.moveTo(0, 0);
+          var h = sensorX + scaleValue(sensor.distance);
 
-					var h = sensorX + scaleValue(sensor.distance);
+          pathSensor.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
+          pathSensor.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
 
-					pathSensor.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
-					pathSensor.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
+          context.fillStyle = drawConfig.sensorColour;
+          context.fill(pathSensor);
+        });
+      });
+    });
+  }
 
-					context.fillStyle = drawConfig.sensorColour;
-					context.fill(pathSensor);
-				});
-			});
-		});
-	}
+  function drawRotated(x, y, theta, drawFunction) {
+    context.save();
+    context.translate(x, y);
+    context.rotate(theta);
 
-	function drawRotated(x, y, theta, drawFunction) {
-		context.save();
-		context.translate(x, y);
-		context.rotate(theta);
+    drawFunction();
 
-		drawFunction();
+    context.restore();
+  }
 
-		context.restore();
-	}
+  function setScale(newScale) {
+    scale = newScale;
+  }
 
-	function setScale(newScale) {
-		scale = newScale;
-	}
+  function setCentre(newCentre) {
+    centre = newCentre;
+  }
 
-	function setCentre(newCentre) {
-		centre = newCentre;
-	}
-
-	this.initialise = initialise;
-	this.redraw = redraw;
-	this.updateState = updateState;
-	this.setScale = setScale;
-	this.setCentre = setCentre;
-}
+  return {
+    initialise: initialise,
+    redraw: redraw,
+    updateState: updateState,
+    setScale: setScale,
+    setCentre: setCentre
+  }
+};
