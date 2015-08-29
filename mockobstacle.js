@@ -5,14 +5,14 @@ var obstacleTypes = Object.freeze({
   RECTANGLE: 'Rectangle'
 });
 
-var createRectangle = function (id, x, y) {
+var createRectangle = function (id, x, y, length, width) {
   return {
     id: id,
     type: obstacleTypes.RECTANGLE,
     x: x,
     y: y,
-    width: 10,
-    length: 100
+    width: width,
+    length: length
   }
 };
 

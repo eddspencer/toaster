@@ -62,11 +62,12 @@ var MockBot = function () {
       dx: 0.01,
       dy: 0.01,
       obstacles: [
-        obstacles.createRectangle('1', 10, 10)
+        obstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
+        obstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05)
       ],
       goal: {
-        x: 50,
-        y: 50
+        x: 0.75,
+        y: 0
       }
     };
 
@@ -79,6 +80,7 @@ var MockBot = function () {
 
   var reset = function () {
     count = 0;
+    setBehaviour(behaviourTypes.STOP);
   };
 
   return {
