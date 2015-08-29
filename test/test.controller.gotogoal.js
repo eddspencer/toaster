@@ -1,14 +1,14 @@
-const expect = require('chai').expect;
+//const expect = require('chai').expect;
 
-const state = {
-  x: 0,
-  y: 0,
-  goal: {
-    x: 1,
-    y: 2
-  },
-  dt: 0.01
-};
+//const state = {
+//  x: 0,
+//  y: 0,
+//  goal: {
+//    x: 1,
+//    y: 2
+//  },
+//  dt: 0.01
+//};
 
 // TODO when have internet get the test up and running
 describe('Controller: Go To Goal', function () {

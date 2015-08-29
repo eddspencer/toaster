@@ -105,7 +105,8 @@ const RobotCanvas = function (canvasId) {
     const width = scaleValue(0.05);
     const length = scaleValue(0.1);
 
-    drawRotated(x, y, theta, function () {
+    // convert to robot coordinates
+    drawRotated(x, y, Math.PI / 2 - theta, function () {
       const pathRobot = new Path2D();
       pathRobot.rect(-width / 2, -length / 2, width, length);
       context.fillStyle = drawConfig.robotColour;
@@ -114,7 +115,7 @@ const RobotCanvas = function (canvasId) {
   }
 
   function drawSensors(x, y, theta, sensors) {
-    drawRotated(x, y, theta, function () {
+    drawRotated(x, y, Math.PI / 2 - theta, function () {
       sensors.forEach(function (sensor) {
         const sensorX = scaleValue(sensor.x);
         const sensorY = -scaleValue(sensor.y);
