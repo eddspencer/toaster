@@ -73,12 +73,11 @@ const RobotCanvas = function (canvasId) {
   function redraw(state) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-    const theta = Math.atan2(state.dy, state.dx);
     const translated = translateAndScale(state.x, state.y);
 
     drawPath();
-    drawSensors(translated.x, translated.y, theta, state.sensors);
-    drawRobot(translated.x, translated.y, theta);
+    drawSensors(translated.x, translated.y, state.theta, state.sensors);
+    drawRobot(translated.x, translated.y, state.theta);
     drawObstacles(state.obstacles);
     drawGoal(state.goal);
   }
