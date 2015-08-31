@@ -1,4 +1,4 @@
-const goToGoal = function () {
+const GoToGoal = function () {
 
   var accumulatedError = 0;
   var previousError = 0;
@@ -35,8 +35,9 @@ const goToGoal = function () {
   };
 
   return {
+    behaviour: 'GoToGoal',
     execute: execute
   };
-}();
+};
 
-module.exports = goToGoal;
+module.exports = GoToGoal;

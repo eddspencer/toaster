@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var Toaster = require('./toaster.js');
 var routes = require('./routes/index');
 
-var MockBot = require('./mockbot.js');
+var MockBot = require('./Mockbot.js');
 
 var app = express();
 

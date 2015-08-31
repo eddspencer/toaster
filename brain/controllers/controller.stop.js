@@ -1,5 +1,6 @@
-const stop = function () {
+const Stop = function () {
   return {
+    behaviour: 'Stop',
     execute: function () {
       return {
         w: 0,
@@ -7,6 +8,6 @@ const stop = function () {
       };
     }
   }
-}();
+};
 
-module.exports = stop;
+module.exports = Stop;

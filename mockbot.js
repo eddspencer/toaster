@@ -3,7 +3,8 @@
  */
 
 const obstacles = require('./mockobstacle');
-const controllers = require('./controllers/controllers');
+const controllers = require('./brain/controllers/controllers');
+const Supervisor = require('./brain/Supervisor');
 
 const MockEncoder = function (id) {
   return {
@@ -22,41 +23,9 @@ const MockSensor = function (id, x, y, theta) {
   }
 };
 
-const behaviourTypes = Object.freeze({
-  STOP: 'STOP',
-  GOTOGOAL: 'GOTOGOAL'
-});
-
-const supervisor = function () {
-  var controller = controllers.stop;
-
-  const setBehaviour = function (behaviour) {
-    switch (behaviour) {
-      case behaviourTypes.GOTOGOAL:
-        controller = controllers.goToGoal;
-        break;
-      case behaviourTypes.STOP:
-        controller = controllers.stop;
-        break;
-      default:
-        controller = controllers.stop;
-        break;
-    }
-  };
-
-  return {
-    setBehaviour: setBehaviour,
-    currentController: function () {
-      return controller;
-    }
-  };
-}();
-
 const MockBot = function () {
-  var behaviour = behaviourTypes.STOP;
-
-  var state = {
-    properties: ['x', 'y'],
+  const supervisor = new Supervisor({
+    controllers: controllers.all(),
     dt: 0.1,
     obstacles: [
       obstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
@@ -66,18 +35,11 @@ const MockBot = function () {
       x: 0.75,
       y: 0.25
     }
-  };
-
-  var values = function (obj) {
-    return Object.keys(obj).map(function (key) {
-      return obj[key];
-    });
-  };
+  });
 
   var setBehaviour = function (newBehaviour) {
-    behaviour = newBehaviour;
+    console.log('Setting behaviour to be ' + newBehaviour);
     supervisor.setBehaviour(newBehaviour);
-    console.log('Setting behaviour to be ' + behaviour);
   };
 
   var currentState = function () {
@@ -93,45 +55,25 @@ const MockBot = function () {
     var rightEncoder = new MockEncoder('R');
     var encoders = [leftEncoder, rightEncoder];
 
+    const state = supervisor.currentState();
+
     state.sensors = sensors;
     state.encoders = encoders;
 
-    const output = supervisor.currentController().execute(state);
-
-    // TODO how to move this to real bot?
-    // TODO will be easier to debug when data pushed from client. Also better for multiple clients
-
-    state.theta += output.w * state.dt;
-
-    state.dx = output.v * Math.cos(state.theta);
-    state.dy = output.v * Math.sin(state.theta);
-
-    state.x += state.dx;
-    state.y += state.dy;
+    supervisor.execute(state);
 
     return state;
   };
 
   var reset = function () {
-    setBehaviour(behaviourTypes.STOP);
-    initState();
+    console.log('Resetting');
+    supervisor.reset();
   };
-
-  var initState = function () {
-    state.x = 0;
-    state.y = 0;
-    state.v = 0.05;
-    state.dx = 0;
-    state.dy = 0;
-    state.theta = Math.atan2(state.dy, state.dx);
-  };
-
-  initState();
 
   return {
     config: {
-      currentBehaviour: behaviour,
-      behaviours: values(behaviourTypes)
+      currentBehaviour: supervisor.currentBehaviour(),
+      behaviours: controllers.behaviourTypes.asList()
     },
     setBehaviour: setBehaviour,
     currentState: currentState,
