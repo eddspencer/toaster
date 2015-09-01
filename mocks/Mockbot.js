@@ -16,13 +16,12 @@ const MockEncoder = function (id) {
 };
 
 const MockBot = function () {
-  //const frSensor = new MockSensor('FR', 0.02, 0.05, -Math.PI / 4);
-  //const flSensor = new MockSensor('FL', -0.02, 0.05, -3 * Math.PI / 4);
-  const ffSensor = new MockSensor('FF', 0, 0.05, -Math.PI / 2);
-  //const brSensor = new MockSensor('BR', 0.025, -0.045, 0);
-  //const blSensor = new MockSensor('BL', -0.025, -0.045, Math.PI);
-  //const sensors = [frSensor, flSensor, ffSensor, brSensor, blSensor];
-  const sensors = [ffSensor];
+  const frSensor = new MockSensor('FR', 0.05, -0.02, Math.PI / 4);
+  const flSensor = new MockSensor('FL', 0.05, 0.02, -Math.PI / 4);
+  const ffSensor = new MockSensor('FF', 0.05, 0, 0);
+  const brSensor = new MockSensor('BR', -0.05, -0.02, 3 * Math.PI / 4);
+  const blSensor = new MockSensor('BL', -0.05, 0.02, -3 * Math.PI / 4);
+  const sensors = [frSensor, flSensor, ffSensor, brSensor, blSensor];
 
   const leftEncoder = new MockEncoder('L');
   const rightEncoder = new MockEncoder('R');
@@ -53,7 +52,7 @@ const MockBot = function () {
   var currentState = function () {
     const state = supervisor.currentState();
     state.sensors.forEach(function (sensor) {
-      sensor.update(state);
+     // sensor.distance = sensor.getDistance(state);
     });
     supervisor.execute(state);
 

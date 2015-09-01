@@ -10,7 +10,8 @@ const RobotCanvas = function (canvasId) {
     pathThickness: 3,
     robotColour: "#0000FF",
     obstacleColour: "#0000EE",
-    sensorColour: "#FF0000",
+    sensorColour: "green",
+    sensorActiveColour: "red",
     sensorConeTheta: Math.PI / 32,
     goalColour: "#DD0000",
     goalThickness: 5
@@ -115,7 +116,7 @@ const RobotCanvas = function (canvasId) {
   }
 
   function drawSensors(x, y, theta, sensors) {
-    drawRotated(x, y, Math.PI / 2 - theta, function () {
+    drawRotated(x, y, theta, function () {
       sensors.forEach(function (sensor) {
         const sensorX = scaleValue(sensor.x);
         const sensorY = -scaleValue(sensor.y);
@@ -124,12 +125,13 @@ const RobotCanvas = function (canvasId) {
           const pathSensor = new Path2D();
           pathSensor.moveTo(0, 0);
 
-          const h = sensorX + scaleValue(sensor.distance);
+          const h = scaleValue(sensor.distance);
 
           pathSensor.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
           pathSensor.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
 
-          context.fillStyle = drawConfig.sensorColour;
+          const active = sensor.maxSensorDistance > sensor.distance;
+          context.fillStyle = active ? drawConfig.sensorActiveColour : drawConfig.sensorColour;
           context.fill(pathSensor);
         });
       });
