@@ -37,8 +37,10 @@ const Supervisor = function (config) {
     currentEvents.forEach(function (event) {
       switch (event) {
         case events.AT_GOAL:
-          console.log('At Goal');
-          setBehaviour(behaviourTypes.Stop);
+          if (controllers.Stop !== controller) {
+            console.log('At Goal');
+            setBehaviour(behaviourTypes.Stop);
+          }
           break;
       }
     });
