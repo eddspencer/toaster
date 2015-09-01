@@ -16,9 +16,9 @@ var createRectangle = function (id, x, y, length, width) {
   }
 };
 
-var obstacles = {
+var mockObstacles = {
   types: obstacleTypes,
   createRectangle: createRectangle
 };
 
-module.exports = obstacles;
+module.exports = mockObstacles;

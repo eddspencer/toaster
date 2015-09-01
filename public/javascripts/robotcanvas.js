@@ -35,7 +35,7 @@ const RobotCanvas = function (canvasId) {
   function initialise() {
     xPath = [];
     yPath = [];
-    obstacles = [];
+    mockObstacles = [];
   }
 
   function updateState(currentState) {
@@ -76,9 +76,9 @@ const RobotCanvas = function (canvasId) {
     const translated = translateAndScale(state.x, state.y);
 
     drawPath();
+    drawObstacles(state.obstacles);
     drawSensors(translated.x, translated.y, state.theta, state.sensors);
     drawRobot(translated.x, translated.y, state.theta);
-    drawObstacles(state.obstacles);
     drawGoal(state.goal);
   }
 

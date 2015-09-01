@@ -8,6 +8,8 @@ const Supervisor = function (config) {
     properties: ['x', 'y'],
     dt: config.dt,
     obstacles: config.obstacles,
+    sensors: config.sensors,
+    encoders: config.encoders,
     goal: config.goal
   };
 
