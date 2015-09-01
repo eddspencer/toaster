@@ -52,7 +52,7 @@ const MockBot = function () {
   var currentState = function () {
     const state = supervisor.currentState();
     state.sensors.forEach(function (sensor) {
-     // sensor.distance = sensor.getDistance(state);
+      sensor.distance = sensor.getDistance(state);
     });
     supervisor.execute(state);
 

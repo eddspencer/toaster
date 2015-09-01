@@ -1,6 +1,8 @@
 const obstacleTypes = require('./mockObstacles').types;
 
 const MockSensor = function (id, x, y, theta) {
+  // TODO add this to some config
+  const minSensorDistance = 0.01;
   const maxSensorDistance = 0.1;
 
   const createPoint = function (x, y) {
@@ -91,11 +93,11 @@ const MockSensor = function (id, x, y, theta) {
       }
     });
 
-    const minDistance = Math.min(distancesToObstacles);
+    const distance = Math.min(distancesToObstacles);
 
-    // Only update reading if obstacle is within the maximum sensor distance
-    if (minDistance < maxSensorDistance) {
-      return minDistance;
+    // Only update reading if obstacle is within the maximum  and minimum sensor range
+    if (distance > minSensorDistance && distance < maxSensorDistance) {
+      return distance;
     } else {
       return maxSensorDistance;
     }
@@ -107,7 +109,7 @@ const MockSensor = function (id, x, y, theta) {
     y: y,
     theta: theta,
     distance: maxSensorDistance,
-    maxSensorDistance : maxSensorDistance,
+    maxSensorDistance: maxSensorDistance,
     getDistance: getDistance
   };
 };
