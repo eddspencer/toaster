@@ -1,6 +1,6 @@
 const obstacleTypes = require('./mockObstacles').types;
 
-const MockSensor = function (id, x, y, theta) {
+const MockSensor = function (id, x, y, theta, importance) {
   // TODO add this to some config
   const minSensorDistance = 0.01;
   const maxSensorDistance = 0.1;
@@ -108,6 +108,7 @@ const MockSensor = function (id, x, y, theta) {
     x: x,
     y: y,
     theta: theta,
+    importance: importance,
     distance: maxSensorDistance,
     maxSensorDistance: maxSensorDistance,
     getDistance: getDistance

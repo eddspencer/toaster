@@ -5,6 +5,7 @@
  */
 
 const events = require('./events');
+const behaviourTypes = require('./controllers/controllers').behaviourTypes;
 
 const Sentinel = function (params) {
 
@@ -20,13 +21,27 @@ const Sentinel = function (params) {
     }
   };
 
+  const checkForObstacles = function (state) {
+    const sensorsActive = state.sensors.reduce(function (atObstacle, sensor) {
+      if (!atObstacle) {
+        atObstacle = sensor.distance < sensor.maxSensorDistance;
+      }
+      return atObstacle;
+    }, false);
+    if (sensorsActive) {
+      return events.AT_OBSTACLE;
+    } else if (behaviourTypes.AvoidObstacle === state.currentBehaviour) {
+      return events.CLEARED_OBSTACLE;
+    }
+  };
+
+  const checks = [checkReachedGoal, checkForObstacles];
   const config = params || {
-      checks: [checkReachedGoal],
       reachedGoalMargin: 0.01
     };
 
   const analyse = function (state) {
-    return config.checks.reduce(function (events, check) {
+    return checks.reduce(function (events, check) {
       const event = check(state);
       if (event) {
         events.push(event);

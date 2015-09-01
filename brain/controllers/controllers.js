@@ -1,6 +1,7 @@
 const controllers = {
-  Stop: require('./controller.stop.js'),
-  GoToGoal: require('./controller.gotogoal.js'),
+  Stop: require('./Stop.js'),
+  GoToGoal: require('./GoToGoal.js'),
+  AvoidObstacle: require('./AvoidObstacle.js'),
   all: function () {
     const obj = {
       asList: []
@@ -18,6 +19,7 @@ const controllers = {
   behaviourTypes: {
     Stop: 'Stop',
     GoToGoal: 'GoToGoal',
+    AvoidObstacle: 'AvoidObstacle',
     asList: function () {
       const self = this;
       return Object.keys(self).reduce(function (types, key) {

@@ -30,6 +30,7 @@ const Supervisor = function (config) {
     if (1 === validControllers.length) {
       console.log('Setting behaviour to be ' + behaviour);
       controller = validControllers[0];
+      state.currentBehaviour = controller.behaviour;
     } else {
       console.error('Unable to get single controller for ' + behaviour + ' got: ' + validControllers);
     }
@@ -43,6 +44,16 @@ const Supervisor = function (config) {
             console.log('At Goal');
             setBehaviour(behaviourTypes.Stop);
           }
+          break;
+        case events.AT_OBSTACLE:
+          if (controllers.AvoidObstacle !== controller) {
+            console.log('Avoiding obstacle');
+            setBehaviour(behaviourTypes.AvoidObstacle);
+          }
+          break;
+        case events.CLEARED_OBSTACLE:
+          console.log('Cleared obstacle');
+          setBehaviour(behaviourTypes.GoToGoal);
           break;
       }
     });
@@ -67,10 +78,6 @@ const Supervisor = function (config) {
     state.y += state.dy;
   };
 
-  const currentBehaviour = function () {
-    return controller.behaviour;
-  };
-
   initState();
 
   return {
@@ -80,8 +87,7 @@ const Supervisor = function (config) {
     reset: reset,
     currentState: function () {
       return state;
-    },
-    currentBehaviour: currentBehaviour
+    }
   };
 };
 
