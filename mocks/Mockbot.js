@@ -32,7 +32,7 @@ const MockBot = function () {
     dt: 0.1,
     obstacles: [
       mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05)
+      mockObstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05)
       //mockObstacles.createRectangle('Blocker', 0.1, 0.5, 1, 0.05)
     ],
     goal: {
