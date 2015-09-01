@@ -1,7 +1,9 @@
+const events = require('./events');
+const behaviourTypes = require('./controllers/controllers').behaviourTypes;
+
 const Supervisor = function (config) {
   const controllers = config.controllers;
   var controller = controllers.Stop;
-  const behaviourTypes = controllers.behaviourTypes;
   const state = {
     properties: ['x', 'y'],
     dt: config.dt,
@@ -24,10 +26,22 @@ const Supervisor = function (config) {
     });
 
     if (1 === validControllers.length) {
+      console.log('Setting behaviour to be ' + behaviour);
       controller = validControllers[0];
     } else {
       console.error('Unable to get single controller for ' + behaviour + ' got: ' + validControllers);
     }
+  };
+
+  const processEvents = function (currentEvents) {
+    currentEvents.forEach(function (event) {
+      switch (event) {
+        case events.AT_GOAL:
+          console.log('At Goal');
+          setBehaviour(behaviourTypes.Stop);
+          break;
+      }
+    });
   };
 
   const reset = function () {
@@ -58,6 +72,7 @@ const Supervisor = function (config) {
   return {
     execute: execute,
     setBehaviour: setBehaviour,
+    processEvents: processEvents,
     reset: reset,
     currentState: function () {
       return state;

@@ -5,6 +5,7 @@
 const obstacles = require('./mockobstacle');
 const controllers = require('./brain/controllers/controllers');
 const Supervisor = require('./brain/Supervisor');
+const Sentinel = require('./brain/Sentinel');
 
 const MockEncoder = function (id) {
   return {
@@ -37,8 +38,9 @@ const MockBot = function () {
     }
   });
 
+  const sentinel = new Sentinel();
+
   var setBehaviour = function (newBehaviour) {
-    console.log('Setting behaviour to be ' + newBehaviour);
     supervisor.setBehaviour(newBehaviour);
   };
 
@@ -61,6 +63,8 @@ const MockBot = function () {
     state.encoders = encoders;
 
     supervisor.execute(state);
+    const events = sentinel.analyse(state);
+    supervisor.processEvents(events);
 
     return state;
   };
