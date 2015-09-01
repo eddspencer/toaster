@@ -86,14 +86,14 @@ const MockSensor = function (id, x, y, theta) {
           const distances = intersectPoints.map(function (point) {
             return distanceBetweenPoints(sensorPoint, point);
           });
-          return Math.min(distances);
+          return Math.min.apply(null, distances);
         default:
           console.error('Unknown obstacle type');
           return maxSensorDistance;
       }
     });
 
-    const distance = Math.min(distancesToObstacles);
+    const distance = Math.min.apply(null, distancesToObstacles);
 
     // Only update reading if obstacle is within the maximum  and minimum sensor range
     if (distance > minSensorDistance && distance < maxSensorDistance) {
