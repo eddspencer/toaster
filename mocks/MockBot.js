@@ -47,11 +47,15 @@ const MockBot = function () {
 
   const sentinel = new Sentinel();
 
-  var setBehaviour = function (newBehaviour) {
+  const setBehaviour = function (newBehaviour) {
     supervisor.setBehaviour(newBehaviour);
   };
 
-  var currentState = function () {
+  const setGoal = function(newGoal) {
+    supervisor.setGoal(newGoal);
+  };
+
+  const currentState = function () {
     const state = supervisor.currentState();
     state.sensors.forEach(function (sensor) {
       sensor.distance = sensor.getDistance(state);
@@ -64,7 +68,7 @@ const MockBot = function () {
     return state;
   };
 
-  var reset = function () {
+  const reset = function () {
     console.log('Resetting');
     supervisor.reset();
   };
@@ -75,6 +79,7 @@ const MockBot = function () {
       behaviours: controllers.behaviourTypes.asList()
     },
     setBehaviour: setBehaviour,
+    setGoal: setGoal,
     currentState: currentState,
     reset: reset
   };

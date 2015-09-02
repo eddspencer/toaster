@@ -70,6 +70,23 @@
     }
   }
 
+  function updateGoal(x, y) {
+    const canvas = $('#draw');
+    const canvasWidth = canvas.width();
+    const canvasHeight = canvas.height();
+    const scale = robotCanvas.getScale();
+    const goalX = (x - canvasWidth / 2) * scale / canvasWidth;
+    const goalY = -(y - canvasHeight / 2) * scale / canvasHeight;
+    if (socket.isOpen()) {
+      socket.send(JSON.stringify({
+        setGoal: {
+          x: goalX,
+          y: goalY
+        }
+      }));
+    }
+  }
+
   // TODO could use rxJS here....
   // TODO what about sockets and rxJS?
   $('#connect').click(function () {
@@ -90,6 +107,10 @@
 
   $('#centre').change(function (event) {
     robotCanvas.setCentre("on" === event.currentTarget.value);
+  });
+
+  $('#draw').click(function (event) {
+    updateGoal(event.offsetX, event.offsetY);
   });
 
 }());

@@ -201,6 +201,10 @@ const RobotCanvas = function (canvasId) {
     scale = newScale;
   }
 
+  function getScale() {
+    return scale;
+  }
+
   function setCentre(newCentre) {
     centre = newCentre;
   }
@@ -210,6 +214,7 @@ const RobotCanvas = function (canvasId) {
     redraw: redraw,
     updateState: updateState,
     setScale: setScale,
+    getScale: getScale,
     setCentre: setCentre
-  }
+  };
 };

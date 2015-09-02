@@ -37,6 +37,10 @@ const Supervisor = function (config) {
     }
   };
 
+  const setGoal = function (newGoal) {
+    state.goal = newGoal;
+  };
+
   const processEvents = function (currentEvents) {
     currentEvents.forEach(function (event) {
       switch (event) {
@@ -84,6 +88,7 @@ const Supervisor = function (config) {
   return {
     execute: execute,
     setBehaviour: setBehaviour,
+    setGoal: setGoal,
     processEvents: processEvents,
     reset: reset,
     currentState: function () {

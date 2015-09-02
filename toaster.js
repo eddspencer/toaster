@@ -35,6 +35,8 @@ var Toaster = function (config) {
         var msg = JSON.parse(message);
         if ('setBehaviour' in msg) {
           bot.setBehaviour(msg.setBehaviour);
+        } else if ('setGoal' in msg) {
+          bot.setGoal(msg.setGoal);
         } else {
           console.error('Unhandled message: %s', msg);
         }
