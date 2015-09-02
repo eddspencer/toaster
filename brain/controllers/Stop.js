@@ -6,6 +6,9 @@ const Stop = function () {
         w: 0,
         v: 0
       };
+    },
+    reset: function() {
+      // Nothing to do
     }
   }
 };

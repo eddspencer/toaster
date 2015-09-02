@@ -14,7 +14,8 @@ const RobotCanvas = function (canvasId) {
     sensorActiveColour: "red",
     sensorConeTheta: Math.PI / 32,
     goalColour: "#DD0000",
-    goalThickness: 5
+    goalThickness: 5,
+    obstacleAvoidanceColour: "yellow"
   };
 
   var xPath, yPath = null;
@@ -81,6 +82,7 @@ const RobotCanvas = function (canvasId) {
     drawSensors(translated.x, translated.y, state.theta, state.sensors);
     drawRobot(translated.x, translated.y, state.theta);
     drawGoal(state.goal);
+    drawVector(translated.x, translated.y, state.theta, state.obstacleAvoidance, drawConfig.obstacleAvoidanceColour);
   }
 
   function drawPath() {
@@ -169,6 +171,20 @@ const RobotCanvas = function (canvasId) {
           console.log('Unknown obstacle type: ' + obstacle);
       }
     });
+  }
+
+  function drawVector(x, y, theta, vector, colour) {
+    if (vector) {
+      drawRotated(x, y, -theta, function () {
+        const pathVector = new Path2D();
+        pathVector.moveTo(-scaleValue(vector.start.x), -scaleValue(vector.start.y));
+        pathVector.lineTo(-scaleValue(vector.end.x), -scaleValue(vector.end.y));
+
+        context.strokeStyle = colour;
+        context.lineWidth = drawConfig.pathThickness / scale;
+        context.stroke(pathVector);
+      });
+    }
   }
 
   function drawRotated(x, y, theta, drawFunction) {

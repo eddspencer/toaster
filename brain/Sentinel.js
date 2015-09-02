@@ -24,7 +24,7 @@ const Sentinel = function (params) {
   const checkForObstacles = function (state) {
     const sensorsActive = state.sensors.reduce(function (atObstacle, sensor) {
       if (!atObstacle) {
-        atObstacle = sensor.distance < sensor.maxSensorDistance;
+        atObstacle = sensor.distance < config.atObstacleMargin;
       }
       return atObstacle;
     }, false);
@@ -37,7 +37,8 @@ const Sentinel = function (params) {
 
   const checks = [checkReachedGoal, checkForObstacles];
   const config = params || {
-      reachedGoalMargin: 0.01
+      reachedGoalMargin: 0.1,
+      atObstacleMargin: 0.08
     };
 
   const analyse = function (state) {

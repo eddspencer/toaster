@@ -5,7 +5,7 @@ const Supervisor = function (config) {
   const controllers = config.controllers;
   var controller = controllers.Stop;
   const state = {
-    properties: ['x', 'y'],
+    properties: ['x', 'y', 'theta', 'v'],
     dt: config.dt,
     obstacles: config.obstacles,
     sensors: config.sensors,
@@ -29,6 +29,7 @@ const Supervisor = function (config) {
 
     if (1 === validControllers.length) {
       console.log('Setting behaviour to be ' + behaviour);
+      controller.reset();
       controller = validControllers[0];
       state.currentBehaviour = controller.behaviour;
     } else {
