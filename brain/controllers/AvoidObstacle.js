@@ -1,7 +1,7 @@
 const geometry = require('../geometry');
 const controlTheory = require('../controlTheory');
 
-const AvoidObstacle = function () {
+const AvoidObstacle = function (controllers) {
   var accumulatedError = 0;
   var previousError = 0;
 
@@ -36,7 +36,7 @@ const AvoidObstacle = function () {
   };
 
   return {
-    behaviour: 'AvoidObstacle',
+    behaviour:  controllers.behaviourTypes.AvoidObstacle,
     execute: execute,
     reset: reset
   }

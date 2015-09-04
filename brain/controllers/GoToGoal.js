@@ -1,6 +1,6 @@
 const controlTheory = require('../controlTheory');
 
-const GoToGoal = function () {
+const GoToGoal = function (controllers) {
   var accumulatedError = 0;
   var previousError = 0;
 
@@ -27,7 +27,7 @@ const GoToGoal = function () {
   };
 
   return {
-    behaviour: 'GoToGoal',
+    behaviour:  controllers.behaviourTypes.GoToGoal,
     execute: execute,
     reset: reset
   };

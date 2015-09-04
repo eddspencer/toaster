@@ -83,7 +83,7 @@ const geometry = function () {
     getVector: getVector,
     getIntersectPoint: getIntersectPoint,
     addVectors: addVectors
-  }
+  };
 }();
 
 module.exports = geometry;

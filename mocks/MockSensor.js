@@ -1,7 +1,7 @@
 const obstacleTypes = require('./mockObstacles').types;
 const geometry = require('../brain/geometry');
 
-const MockSensor = function (id, x, y, theta, importance) {
+const MockSensor = function (id, x, y, theta, group, importance) {
   // TODO add this to some config
   const minSensorDistance = 0.01;
   const maxSensorDistance = 0.1;
@@ -47,6 +47,7 @@ const MockSensor = function (id, x, y, theta, importance) {
     x: x,
     y: y,
     theta: theta,
+    group: group,
     importance: importance,
     distance: maxSensorDistance,
     maxSensorDistance: maxSensorDistance,

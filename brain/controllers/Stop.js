@@ -1,13 +1,13 @@
-const Stop = function () {
+const Stop = function (controllers) {
   return {
-    behaviour: 'Stop',
+    behaviour: controllers.behaviourTypes.Stop,
     execute: function () {
       return {
         w: 0,
         v: 0
       };
     },
-    reset: function() {
+    reset: function () {
       // Nothing to do
     }
   }

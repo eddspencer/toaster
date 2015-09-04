@@ -21,16 +21,25 @@ const Sentinel = function (params) {
     }
   };
 
-  const checkForObstacles = function (state) {
-    const sensorsActive = state.sensors.reduce(function (atObstacle, sensor) {
-      if (!atObstacle) {
-        atObstacle = sensor.distance < config.atObstacleMargin;
+  const isObstacleWithin = function (sensors, distance) {
+    return sensors.reduce(function (withinDistance, sensor) {
+      if (!withinDistance) {
+        withinDistance = sensor.distance < distance;
       }
-      return atObstacle;
+      return withinDistance;
     }, false);
-    if (sensorsActive) {
-      return events.AT_OBSTACLE;
-    } else if (behaviourTypes.AvoidObstacle === state.currentBehaviour) {
+  };
+
+  const checkForObstacles = function (state) {
+    const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
+    if (atObstacle) {
+      const unsafe = isObstacleWithin(state.sensors, config.unsafeMargin);
+      if (unsafe) {
+        return events.UNSAFE;
+      } else {
+        return events.AT_OBSTACLE;
+      }
+    } else if (!~[behaviourTypes.GoToGoal, behaviourTypes.Stop].indexOf(state.currentBehaviour)) {
       return events.CLEARED_OBSTACLE;
     }
   };
@@ -38,7 +47,8 @@ const Sentinel = function (params) {
   const checks = [checkReachedGoal, checkForObstacles];
   const config = params || {
       reachedGoalMargin: 0.1,
-      atObstacleMargin: 0.08
+      atObstacleMargin: 0.1,
+      unsafeMargin: 0.05
     };
 
   const analyse = function (state) {
