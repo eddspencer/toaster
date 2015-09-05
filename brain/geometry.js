@@ -9,8 +9,7 @@ const geometry = function () {
   };
 
   const getVector = function (start, theta, length) {
-    // Minus as theta is clockwise
-    const end = createPoint(start.x + Math.cos(-theta) * length, start.y + Math.sin(-theta) * length);
+    const end = createPoint(start.x + Math.cos(theta) * length, start.y + Math.sin(theta) * length);
     return createLine(start, end);
   };
 
@@ -81,11 +80,11 @@ const geometry = function () {
 
   /**
    * Transform using matrix: R = [cos(theta) -sin(theta) x; sin(theta) cos(theta) y; 0 0 1];
-   * and  v = [x y 1] to get the points rotated by theta. Theta rotates clockwise
+   * and  v = [x y 1] to get the points rotated by theta. Theta rotates anti-clockwise
    */
   const transform = function (x, y, theta) {
-    const xT = x * Math.cos(theta) + y * Math.sin(theta);
-    const yT = -x * Math.sin(theta) + y * Math.cos(theta);
+    const xT = x * Math.cos(-theta) + y * Math.sin(-theta);
+    const yT = -x * Math.sin(-theta) + y * Math.cos(-theta);
     return {
       x: xT,
       y: yT

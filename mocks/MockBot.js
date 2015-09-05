@@ -17,11 +17,11 @@ const MockEncoder = function (id) {
 
 const MockBot = function () {
   // TODO alter importance of sensors and add them to configuration
-  const frSensor = new MockSensor('FR', 0.05, -0.02, Math.PI / 4, controllers.sensorGroups.Right, 1);
-  const flSensor = new MockSensor('FL', 0.05, 0.02, -Math.PI / 4, controllers.sensorGroups.Left, 1);
+  const frSensor = new MockSensor('FR', 0.05, -0.02, -Math.PI / 4, controllers.sensorGroups.Right, 1);
+  const flSensor = new MockSensor('FL', 0.05, 0.02, Math.PI / 4, controllers.sensorGroups.Left, 1);
   const ffSensor = new MockSensor('FF', 0.05, 0, 0, controllers.sensorGroups.Front, 0.5);
-  const brSensor = new MockSensor('BR', -0.05, -0.02, 3 * Math.PI / 4, controllers.sensorGroups.Right, 1);
-  const blSensor = new MockSensor('BL', -0.05, 0.02, -3 * Math.PI / 4, controllers.sensorGroups.Left, 1);
+  const brSensor = new MockSensor('BR', -0.05, -0.02, -3 * Math.PI / 4, controllers.sensorGroups.Right, 1);
+  const blSensor = new MockSensor('BL', -0.05, 0.02, 3 * Math.PI / 4, controllers.sensorGroups.Left, 1);
   const sensors = [frSensor, flSensor, ffSensor, brSensor, blSensor];
 
   const leftEncoder = new MockEncoder('L');
@@ -34,12 +34,12 @@ const MockBot = function () {
     v: 0.025,
     obstacles: [
       // TODO have various 'terrains' that you can choose from in the screen
-      //mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
-      //mockObstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('Blocker', 0.1, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('Blocker', -0.15, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('Blocker', -0.5, 0.15, 0.05, 1),
-      mockObstacles.createRectangle('Blocker', -0.5, -0.1, 0.05, 1)
+      mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
+      mockObstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05)
+      //mockObstacles.createRectangle('Blocker', 0.1, 0.5, 1, 0.05),
+      //mockObstacles.createRectangle('Blocker', -0.15, 0.5, 1, 0.05),
+      //mockObstacles.createRectangle('Blocker', -0.5, 0.15, 0.05, 1),
+      //mockObstacles.createRectangle('Blocker', -0.5, -0.1, 0.05, 1)
     ],
     goal: {
       x: 0.75,

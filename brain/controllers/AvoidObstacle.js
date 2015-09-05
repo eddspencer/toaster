@@ -10,7 +10,7 @@ const AvoidObstacle = function (controllers) {
   const getObstacleAvoidance = function (state) {
     return state.sensors.reduce(function (obstacleAvoidance, sensor) {
       const point = geometry.createPoint(0, 0); // as summing always start from centre of robot
-      const vector = geometry.getVector(point, sensor.theta, -sensor.distance * sensor.importance);
+      const vector = geometry.getVector(point, state.theta + sensor.theta, sensor.distance * sensor.importance);
       return geometry.addVectors(obstacleAvoidance, vector);
     }, geometry.createLine(geometry.createPoint(0, 0), geometry.createPoint(0, 0)));
   };

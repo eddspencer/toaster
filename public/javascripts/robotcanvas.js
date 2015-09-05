@@ -115,7 +115,7 @@ const RobotCanvas = function (canvasId) {
     const length = scaleValue(0.1);
 
     // convert to robot coordinates
-    drawRotated(x, y, Math.PI / 2 + theta, function () {
+    drawRotated(x, y, Math.PI / 2 - theta, function () {
       const pathRobot = new Path2D();
       pathRobot.rect(-width / 2, -length / 2, width, length);
       context.fillStyle = drawConfig.robotColour;
@@ -124,14 +124,14 @@ const RobotCanvas = function (canvasId) {
   }
 
   function drawSensors(x, y, theta, sensors) {
-    drawRotated(x, y, Math.PI / 2 + theta, function () {
+    drawRotated(x, y, Math.PI / 2 - theta, function () {
       // Due to PI/2 rotation and negative theta to get canvas in robot coordinates must inverse and
       // flip sensor properties and remove the PI/2 rotation
       sensors.forEach(function (sensor) {
         const sensorX = -scaleValue(sensor.y);
         const sensorY = -scaleValue(sensor.x);
 
-        drawRotated(sensorX, sensorY, sensor.theta - Math.PI / 2, function () {
+        drawRotated(sensorX, sensorY, -sensor.theta - Math.PI / 2, function () {
           const pathSensor = new Path2D();
           pathSensor.moveTo(0, 0);
 
