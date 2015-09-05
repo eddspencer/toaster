@@ -7,9 +7,10 @@ const MockSensor = function (id, x, y, theta, group, importance) {
   const maxSensorDistance = 0.1;
 
   const getDistance = function (state) {
-    const sensorPoint = geometry.createPoint(state.x + x, state.y + y);
-    // Rotate out of the robots frame of reference to the world frame and compute vector
-    const sensorLine = geometry.getVector(sensorPoint, theta - state.theta, maxSensorDistance);
+    // Get sensor point in the world frame and compute sensor visibility
+    const sensorRotated = geometry.transform(x, y, state.theta);
+    const sensorPoint = geometry.createPoint(state.x + sensorRotated.x, state.y + sensorRotated.y);
+    const sensorLine = geometry.getVector(sensorPoint, theta + state.theta, maxSensorDistance);
 
     const distancesToObstacles = state.obstacles.map(function (obstacle) {
       switch (obstacle.type) {

@@ -9,7 +9,8 @@ const geometry = function () {
   };
 
   const getVector = function (start, theta, length) {
-    const end = createPoint(start.x + Math.cos(theta) * length, start.y + Math.sin(theta) * length);
+    // Minus as theta is clockwise
+    const end = createPoint(start.x + Math.cos(-theta) * length, start.y + Math.sin(-theta) * length);
     return createLine(start, end);
   };
 
@@ -17,6 +18,10 @@ const geometry = function () {
     const xDist = p2.x - p1.x;
     const yDist = p2.y - p1.y;
     return Math.sqrt(xDist * xDist + yDist * yDist);
+  };
+
+  const norm = function (p) {
+    return Math.sqrt(p.x * p.x + p.y * p.y);
   };
 
   const getLinesOfRectangle = function (rectangle) {
@@ -74,15 +79,30 @@ const geometry = function () {
     return createLine(start, end);
   };
 
+  /**
+   * Transform using matrix: R = [cos(theta) -sin(theta) x; sin(theta) cos(theta) y; 0 0 1];
+   * and  v = [x y 1] to get the points rotated by theta. Theta rotates clockwise
+   */
+  const transform = function (x, y, theta) {
+    const xT = x * Math.cos(theta) + y * Math.sin(theta);
+    const yT = -x * Math.sin(theta) + y * Math.cos(theta);
+    return {
+      x: xT,
+      y: yT
+    };
+  };
+
   return {
     boundAngle: boundAngle,
     createPoint: createPoint,
     createLine: createLine,
     getLinesOfRectangle: getLinesOfRectangle,
     distanceBetweenPoints: distanceBetweenPoints,
+    norm: norm,
     getVector: getVector,
     getIntersectPoint: getIntersectPoint,
-    addVectors: addVectors
+    addVectors: addVectors,
+    transform: transform
   };
 }();
 

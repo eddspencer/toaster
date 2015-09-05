@@ -15,7 +15,10 @@ const RobotCanvas = function (canvasId) {
     sensorConeTheta: Math.PI / 32,
     goalColour: "#DD0000",
     goalThickness: 5,
-    obstacleAvoidanceColour: "yellow"
+    obstacleAvoidanceColour: "yellow",
+    followWallColour: "orange",
+    wallSegmentColour: "purple",
+    followWallPerpendicularColour: "brown"
   };
 
   var xPath, yPath = null;
@@ -83,6 +86,9 @@ const RobotCanvas = function (canvasId) {
     drawRobot(translated.x, translated.y, state.theta);
     drawGoal(state.goal);
     drawVector(translated.x, translated.y, state.theta, state.obstacleAvoidance, drawConfig.obstacleAvoidanceColour);
+    drawVector(translated.x, translated.y, state.theta, state.followWall, drawConfig.followWallColour);
+    drawVector(translated.x, translated.y, state.theta, state.followWallPerpendicular, drawConfig.followWallPerpendicularColour);
+    drawVector(translated.x, translated.y, state.theta, state.wallSegment, drawConfig.wallSegmentColour);
   }
 
   function drawPath() {
@@ -109,7 +115,7 @@ const RobotCanvas = function (canvasId) {
     const length = scaleValue(0.1);
 
     // convert to robot coordinates
-    drawRotated(x, y, Math.PI / 2 - theta, function () {
+    drawRotated(x, y, Math.PI / 2 + theta, function () {
       const pathRobot = new Path2D();
       pathRobot.rect(-width / 2, -length / 2, width, length);
       context.fillStyle = drawConfig.robotColour;
@@ -118,7 +124,7 @@ const RobotCanvas = function (canvasId) {
   }
 
   function drawSensors(x, y, theta, sensors) {
-    drawRotated(x, y, Math.PI / 2 - theta, function () {
+    drawRotated(x, y, Math.PI / 2 + theta, function () {
       // Due to PI/2 rotation and negative theta to get canvas in robot coordinates must inverse and
       // flip sensor properties and remove the PI/2 rotation
       sensors.forEach(function (sensor) {

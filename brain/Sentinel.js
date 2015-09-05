@@ -31,16 +31,21 @@ const Sentinel = function (params) {
   };
 
   const checkForObstacles = function (state) {
-    const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
-    if (atObstacle) {
-      const unsafe = isObstacleWithin(state.sensors, config.unsafeMargin);
-      if (unsafe) {
-        return events.UNSAFE;
-      } else {
-        return events.AT_OBSTACLE;
+    if (state.currentBehaviour === behaviourTypes.Stop) {
+      return false;
+    } else {
+      const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
+      if (atObstacle) {
+        const unsafe = isObstacleWithin(state.sensors, config.unsafeMargin);
+        if (true) {
+          //return events.AT_OBSTACLE;
+          return events.UNSAFE;
+        } else {
+          return events.AT_OBSTACLE;
+        }
+      } else if (!~[behaviourTypes.GoToGoal, behaviourTypes.FollowWall].indexOf(state.currentBehaviour)) {
+        return events.CLEARED_OBSTACLE;
       }
-    } else if (!~[behaviourTypes.GoToGoal, behaviourTypes.Stop].indexOf(state.currentBehaviour)) {
-      return events.CLEARED_OBSTACLE;
     }
   };
 

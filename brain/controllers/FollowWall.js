@@ -3,6 +3,11 @@ const controlTheory = require('../controlTheory');
 
 const FollowWall = function (controllers) {
 
+  var accumulatedError = 0;
+  var previousError = 0;
+
+  const followWallDistance = 0.08;
+
   const getSensorGroup = function (sensors, sensorGroups) {
     // Get all sensors belonging to required group
     const group = sensors.filter(function (sensor) {
@@ -30,9 +35,15 @@ const FollowWall = function (controllers) {
 
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
-      return rightGroup.slice(0, 2);
+      return {
+        sliding: controllers.sensorGroups.Right,
+        sensors: rightGroup.slice(0, 2)
+      };
     } else {
-      return leftGroup.slice(0, 2);
+      return {
+        sliding: controllers.sensorGroups.Left,
+        sensors: leftGroup.slice(0, 2)
+      };
     }
   };
 
@@ -43,22 +54,54 @@ const FollowWall = function (controllers) {
   };
 
   const execute = function (state) {
-    const wallSensors = getWallSensors(state.sensors);
-    const p1 = getSensorReadingPoint(wallSensors[0]);
-    const p2 = getSensorReadingPoint(wallSensors[1]);
+    const sensorResult = getWallSensors(state.sensors);
+    const p1 = getSensorReadingPoint(sensorResult.sensors[0]);
+    const p2 = getSensorReadingPoint(sensorResult.sensors[1]);
 
-    // TODO may have to add logic to define direction of uFwT
-    const uFwT = geometry.createPoint(p2.x - p1.x, p2.y - p1.y);
-    const thetaFw = Math.atan2(uFwT.y, uFwT.x);
-    const uFw = geometry.getVector(geometry.createPoint(state.x, state.y), thetaFw, 1);
+    // Calculate the wall segment in the direction of travel
+    // TODO this needs work
+    const uFwT = (controllers.sensorGroups.Right === sensorResult.sliding) ? geometry.createPoint(p1.x - p2.x, p1.y - p2.y) : geometry.createPoint(p2.x - p1.x, p2.y - p1.y);
+
+    // Calculate the vector from the robot to the wall segment
+    const uFwTNorm = geometry.norm(uFwT);
+    const uFwTP = geometry.createPoint(uFwT.x / uFwTNorm, uFwT.y / uFwTNorm);
+    const uA = p1;
+    const uP = geometry.createPoint(state.x, state.y);
+
+    // Calculate: u_fw_p = ((u_a-u_p)-((u_a-u_p)'*u_fw_tp)*u_fw_tp)
+    const uAuPDiff = geometry.createPoint(uA.x - uP.x, uA.y - uP.y);
+    const uAuPDiffDotUFwTP = uAuPDiff.x * uFwTP.x + uAuPDiff.y * uFwTP.y;
+
+    const uFwP = geometry.createPoint(uAuPDiff.x - uAuPDiffDotUFwTP * uFwTP.x, uAuPDiff.y - uAuPDiffDotUFwTP * uFwTP.y);
+
+    // Get the vector perpendicular to the wall segment that will keep you a constant
+    // distance from the segment
+    const uFwPNorm = geometry.norm(uFwP);
+    const uFwPP = geometry.createPoint(uFwP.x / uFwPNorm, uFwP.y / uFwPNorm);
+    const uFw = geometry.createPoint(
+      followWallDistance * uFwTP.x + (uFwP.x - followWallDistance * uFwPP.x),
+      followWallDistance * uFwTP.y + (uFwP.y - followWallDistance * uFwPP.y)
+    );
+
+    // Calculate heading
+    state.followWall = geometry.createLine(geometry.createPoint(0, 0), uFw);
+    state.wallSegment = geometry.createLine(p1, p2);
+    state.followWallPerpendicular = geometry.createLine(geometry.createPoint(0, 0), uFwP);
+
+    const result = controlTheory.calculateTrajectory(state, uFw, accumulatedError, previousError);
+    const w = result.w;
+    previousError = result.thetaError;
+    accumulatedError = result.accumulatedError;
 
     return {
-      w: 0,
+      w: w,
       v: state.v
     };
   };
 
   const reset = function () {
+    previousError = 0;
+    accumulatedError = 0;
   };
 
   return {

@@ -8,6 +8,7 @@ const Supervisor = function (config) {
   const state = {
     properties: ['x', 'y', 'theta', 'v'],
     dt: config.dt,
+    v: config.v,
     obstacles: config.obstacles,
     sensors: config.sensors,
     encoders: config.encoders,
@@ -18,10 +19,9 @@ const Supervisor = function (config) {
   const initState = function () {
     state.x = 0;
     state.y = 0;
-    state.v = 0.05;
     state.dx = 0;
     state.dy = 0;
-    state.theta = Math.atan2(state.dy, state.dx);
+    state.theta = Math.PI / 4;
   };
 
   const setBehaviour = function (behaviour) {
