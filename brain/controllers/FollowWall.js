@@ -47,20 +47,18 @@ const FollowWall = function (controllers) {
     }
   };
 
-  const getSensorReadingPoint = function (sensor) {
-    const start = geometry.createPoint(sensor.x, sensor.y);
-    const sensorVector = geometry.getVector(start, sensor.theta, sensor.distance);
+  const getSensorReadingPoint = function (state, sensor) {
+    const sensorVector = sensor.getVector(state);
     return sensorVector.end;
   };
 
   const execute = function (state) {
     const sensorResult = getWallSensors(state.sensors);
-    const p1 = getSensorReadingPoint(sensorResult.sensors[0]);
-    const p2 = getSensorReadingPoint(sensorResult.sensors[1]);
+    const p1 = getSensorReadingPoint(state, sensorResult.sensors[0]);
+    const p2 = getSensorReadingPoint(state, sensorResult.sensors[1]);
 
     // Calculate the wall segment in the direction of travel
-    // TODO this needs work
-    const uFwT = (controllers.sensorGroups.Right === sensorResult.sliding) ? geometry.createPoint(p1.x - p2.x, p1.y - p2.y) : geometry.createPoint(p2.x - p1.x, p2.y - p1.y);
+    const uFwT = geometry.createPoint(p2.x - p1.x, p2.y - p1.y);
 
     // Calculate the vector from the robot to the wall segment
     const uFwTNorm = geometry.norm(uFwT);

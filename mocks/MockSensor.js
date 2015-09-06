@@ -6,11 +6,15 @@ const MockSensor = function (id, x, y, theta, group, importance) {
   const minSensorDistance = 0.01;
   const maxSensorDistance = 0.1;
 
-  const getDistance = function (state) {
+  const getVector = function (state) {
     // Get sensor point in the world frame and compute sensor visibility
     const sensorRotated = geometry.transform(x, y, state.theta);
     const sensorPoint = geometry.createPoint(state.x + sensorRotated.x, state.y + sensorRotated.y);
-    const sensorLine = geometry.getVector(sensorPoint, theta + state.theta, maxSensorDistance);
+    return geometry.getVector(sensorPoint, theta + state.theta, maxSensorDistance);
+  };
+
+  const getDistance = function (state) {
+    const sensorLine = getVector(state);
 
     const distancesToObstacles = state.obstacles.map(function (obstacle) {
       switch (obstacle.type) {
@@ -24,7 +28,7 @@ const MockSensor = function (id, x, y, theta, group, importance) {
             return intersections;
           }, []);
           const distances = intersectPoints.map(function (point) {
-            return geometry.distanceBetweenPoints(sensorPoint, point);
+            return geometry.distanceBetweenPoints(sensorLine.start, point);
           });
           return Math.min.apply(null, distances);
         default:
@@ -52,6 +56,7 @@ const MockSensor = function (id, x, y, theta, group, importance) {
     importance: importance,
     distance: maxSensorDistance,
     maxSensorDistance: maxSensorDistance,
+    getVector: getVector,
     getDistance: getDistance
   };
 };

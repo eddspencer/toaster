@@ -37,8 +37,7 @@ const Sentinel = function (params) {
       const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
       if (atObstacle) {
         const unsafe = isObstacleWithin(state.sensors, config.unsafeMargin);
-        if (true) {
-          //return events.AT_OBSTACLE;
+        if (unsafe) {
           return events.UNSAFE;
         } else {
           return events.AT_OBSTACLE;
