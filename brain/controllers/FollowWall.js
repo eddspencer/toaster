@@ -7,7 +7,7 @@ const FollowWall = function (controllers) {
   var previousError = 0;
   var previousSlide = null;
 
-  const followWallDistance = 0.15;
+  const followWallDistance = 0.1;
 
   const getSensorGroup = function (sensors, sensorGroups) {
     // Get all sensors belonging to required group
@@ -58,8 +58,10 @@ const FollowWall = function (controllers) {
       return getResult(controllers.sensorGroups.Right, leftGroup, rightGroup);
     } else if (leftReading === rightReading) {
       // If readings are the same assume that sensors are not reading anything and
-      // continue the way you were before
-      return getResult(previousSlide, leftGroup, rightGroup);
+      // start to turn into the wall, assuming that the wall has ended. Turn into the wall by switching
+      // sensor groups around
+      // TODO this can turn you into the obstacle, maybe a better way to do this?
+      return getResult(previousSlide, rightGroup, leftGroup);
     } else {
       return getResult(controllers.sensorGroups.Left, leftGroup, rightGroup);
     }
