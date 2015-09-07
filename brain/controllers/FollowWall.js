@@ -35,9 +35,21 @@ const FollowWall = function (controllers) {
     const rightReading = sumSensorReadings(rightGroup);
 
     const getResult = function (slidingMode, leftGroup, rightGroup) {
+      const getSensorsInDirectionOfTravel = function (sensors) {
+        const twoClosestSensors = sensors.slice(0, 2);
+        return ['FF', 'FR', 'FL', 'BR', 'BL'].reduce(function (ordered, id) {
+          twoClosestSensors.forEach(function (sensor) {
+            if (id === sensor.id) {
+              ordered.push(sensor);
+            }
+          });
+          return ordered;
+        }, []);
+      };
+
       return {
         sliding: slidingMode,
-        sensors: slidingMode === controllers.sensorGroups.Right ? rightGroup.slice(0, 2) : leftGroup.slice(0, 2)
+        sensors: getSensorsInDirectionOfTravel(slidingMode === controllers.sensorGroups.Right ? rightGroup : leftGroup)
       };
     };
 
@@ -74,12 +86,12 @@ const FollowWall = function (controllers) {
     const p2 = getSensorReadingPoint(state, sensorResult.sensors[1]);
 
     // Calculate the wall segment in the direction of travel
-    const uFwT = geometry.createPoint(p2.x - p1.x, p2.y - p1.y);
+    const uFwT = geometry.createPoint(p1.x - p2.x, p1.y - p2.y);
 
     // Calculate the vector from the robot to the wall segment
     const uFwTNorm = geometry.norm(uFwT);
     const uFwTP = geometry.createPoint(uFwT.x / uFwTNorm, uFwT.y / uFwTNorm);
-    const uA = p1;
+    const uA = p2;
     const uP = geometry.createPoint(state.x, state.y);
 
     // Calculate: u_fw_p = ((u_a-u_p)-((u_a-u_p)'*u_fw_tp)*u_fw_tp)
@@ -98,9 +110,9 @@ const FollowWall = function (controllers) {
     );
 
     // Calculate heading
-    state.followWall = geometry.createLine(geometry.createPoint(0, 0), uFw);
+    state.followWall = geometry.createLine(geometry.createPoint(0,0), uFw);
     state.wallSegment = geometry.createLine(p2, p1);
-    state.followWallPerpendicular = geometry.createLine(geometry.createPoint(0, 0), uFwP);
+    state.followWallPerpendicular = geometry.createLine(geometry.createPoint(0,0), uFwP);
 
     const result = controlTheory.calculateTrajectory(state, uFw, accumulatedError, previousError);
     const w = result.w;

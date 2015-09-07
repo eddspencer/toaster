@@ -179,12 +179,13 @@ const RobotCanvas = function (canvasId) {
     });
   }
 
+  // TODO not sure I can trust the drawing of any of the vector drawing.....
   function drawVectorRobotFrame(x, y, theta, vector, colour) {
     if (vector) {
-      drawRotated(x, y, -theta, function () {
+      drawRotated(x, y, Math.PI / 2 - theta, function () {
         const pathVector = new Path2D();
-        pathVector.moveTo(-scaleValue(vector.start.x), -scaleValue(vector.start.y));
-        pathVector.lineTo(-scaleValue(vector.end.x), -scaleValue(vector.end.y));
+        pathVector.moveTo(-scaleValue(vector.start.y), -scaleValue(vector.start.x));
+        pathVector.lineTo(-scaleValue(vector.end.y), -scaleValue(vector.end.x));
 
         context.strokeStyle = colour;
         context.lineWidth = drawConfig.pathThickness / scale;
