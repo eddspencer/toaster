@@ -66,7 +66,7 @@ const Sentinel = function (params) {
   const checks = [checkReachedGoal, checkForObstacles, progressMade];
   const config = params || {
       reachedGoalMargin: 0.1,
-      atObstacleMargin: 0.1,
+      atObstacleMargin: 0.15,
       unsafeMargin: 0.05
     };
 

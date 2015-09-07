@@ -7,7 +7,7 @@ const FollowWall = function (controllers) {
   var previousError = 0;
   var previousSlide = null;
 
-  const followWallDistance = 0.08;
+  const followWallDistance = 0.15;
 
   const getSensorGroup = function (sensors, sensorGroups) {
     // Get all sensors belonging to required group
@@ -41,28 +41,20 @@ const FollowWall = function (controllers) {
       };
     };
 
-    const getSensorsByID = function (ids) {
-      return ids.map(function (id) {
-        return sensors.filter(function (sensor) {
-          return sensor.id === id;
-        })[0];
-      });
-    };
-
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
       return getResult(controllers.sensorGroups.Right, leftGroup, rightGroup);
     } else if (leftReading === rightReading) {
       // If readings are the same assume that sensors are not reading anything and
       // continue the way you were before
-      return getResult(previousSlide, getSensorsByID(['BL', 'FL']), getSensorsByID(['BR', 'FR']));
+      return getResult(previousSlide, leftGroup, rightGroup);
     } else {
       return getResult(controllers.sensorGroups.Left, leftGroup, rightGroup);
     }
   };
 
   const getSensorReadingPoint = function (state, sensor) {
-    const sensorVector = sensor.getVector(state);
+    const sensorVector = sensor.getVector(state, sensor.distance);
     return sensorVector.end;
   };
 
@@ -107,7 +99,7 @@ const FollowWall = function (controllers) {
 
     // Calculate heading
     state.followWall = geometry.createLine(geometry.createPoint(0, 0), uFw);
-    state.wallSegment = geometry.createLine(p1, p2);
+    state.wallSegment = geometry.createLine(p2, p1);
     state.followWallPerpendicular = geometry.createLine(geometry.createPoint(0, 0), uFwP);
 
     const result = controlTheory.calculateTrajectory(state, uFw, accumulatedError, previousError);

@@ -4,17 +4,17 @@ const geometry = require('../brain/geometry');
 const MockSensor = function (id, x, y, theta, group, importance) {
   // TODO add this to some config
   const minSensorDistance = 0.01;
-  const maxSensorDistance = 0.1;
+  const maxSensorDistance = 0.2;
 
-  const getVector = function (state) {
+  const getVector = function (state, distance) {
     // Get sensor point in the world frame and compute sensor visibility
     const sensorRotated = geometry.transform(x, y, state.theta);
     const sensorPoint = geometry.createPoint(state.x + sensorRotated.x, state.y + sensorRotated.y);
-    return geometry.getVector(sensorPoint, theta + state.theta, maxSensorDistance);
+    return geometry.getVector(sensorPoint, theta + state.theta, distance);
   };
 
   const getDistance = function (state) {
-    const sensorLine = getVector(state);
+    const sensorLine = getVector(state, maxSensorDistance);
 
     const distancesToObstacles = state.obstacles.map(function (obstacle) {
       switch (obstacle.type) {
