@@ -15,7 +15,7 @@ const FollowWall = function (controllers) {
       return ~sensorGroups.indexOf(sensor.group);
     });
 
-    // Sort them with smallest reading first
+    // Sort them with smallest reading first and largest importance first
     return group.sort(function (s1, s2) {
       return s1.distance - s2.distance;
     });
@@ -37,15 +37,25 @@ const FollowWall = function (controllers) {
     const getResult = function (slidingMode, leftGroup, rightGroup) {
       return {
         sliding: slidingMode,
-        sensors: slidingMode == controllers.sensorGroups.Right ? rightGroup : leftGroup
+        sensors: slidingMode === controllers.sensorGroups.Right ? rightGroup.slice(0, 2) : leftGroup.slice(0, 2)
       };
+    };
+
+    const getSensorsByID = function (ids) {
+      return ids.map(function (id) {
+        return sensors.filter(function (sensor) {
+          return sensor.id === id;
+        })[0];
+      });
     };
 
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
       return getResult(controllers.sensorGroups.Right, leftGroup, rightGroup);
-    } else if (leftReading == rightReading) {
-      return getResult(previousSlide, leftGroup, rightGroup);
+    } else if (leftReading === rightReading) {
+      // If readings are the same assume that sensors are not reading anything and
+      // continue the way you were before
+      return getResult(previousSlide, getSensorsByID(['BL', 'FL']), getSensorsByID(['BR', 'FR']));
     } else {
       return getResult(controllers.sensorGroups.Left, leftGroup, rightGroup);
     }
@@ -56,8 +66,18 @@ const FollowWall = function (controllers) {
     return sensorVector.end;
   };
 
+  const setProgressMade = function (state) {
+    if (!state.progressMade) {
+      state.progressMade = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
+    }
+  };
+
   const execute = function (state) {
+    setProgressMade(state);
+
     const sensorResult = getWallSensors(state.sensors);
+    previousSlide = sensorResult.sliding;
+
     const p1 = getSensorReadingPoint(state, sensorResult.sensors[0]);
     const p2 = getSensorReadingPoint(state, sensorResult.sensors[1]);
 

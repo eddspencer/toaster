@@ -22,7 +22,9 @@ const MockBot = function () {
   const ffSensor = new MockSensor('FF', 0.05, 0, 0, controllers.sensorGroups.Front, 0.5);
   const brSensor = new MockSensor('BR', -0.05, -0.02, -3 * Math.PI / 4, controllers.sensorGroups.Right, 1);
   const blSensor = new MockSensor('BL', -0.05, 0.02, 3 * Math.PI / 4, controllers.sensorGroups.Left, 1);
-  const sensors = [frSensor, flSensor, ffSensor, brSensor, blSensor];
+
+  // This order is important for following wall when sensors do not read object
+  const sensors = [frSensor, brSensor, flSensor, blSensor, ffSensor];
 
   const leftEncoder = new MockEncoder('L');
   const rightEncoder = new MockEncoder('R');

@@ -5,23 +5,24 @@ const Supervisor = function (config) {
   const controllers = config.controllers;
   var controller = controllers.Stop;
 
-  const state = {
-    properties: ['x', 'y', 'theta', 'v'],
-    dt: config.dt,
-    v: config.v,
-    obstacles: config.obstacles,
-    sensors: config.sensors,
-    encoders: config.encoders,
-    goal: config.goal,
-    currentBehaviour: controller.behaviour
-  };
+  var state = null;
 
   const initState = function () {
-    state.x = 0;
-    state.y = 0;
-    state.dx = 0;
-    state.dy = 0;
-    state.theta = Math.PI / 4;
+    state = {
+      properties: ['x', 'y', 'theta', 'v'],
+      dt: config.dt,
+      v: config.v,
+      obstacles: config.obstacles,
+      sensors: config.sensors,
+      encoders: config.encoders,
+      goal: config.goal,
+      currentBehaviour: controller.behaviour,
+      x: 0,
+      y: 0,
+      dx: 0,
+      dy: 0,
+      theta: Math.PI / 4
+    };
   };
 
   const setBehaviour = function (behaviour) {
@@ -59,6 +60,9 @@ const Supervisor = function (config) {
           setBehaviour(behaviourTypes.AvoidObstacle);
           break;
         case events.CLEARED_OBSTACLE:
+          setBehaviour(behaviourTypes.GoToGoal);
+          break;
+        case events.PROGRESS_MADE:
           setBehaviour(behaviourTypes.GoToGoal);
           break;
       }

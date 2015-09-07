@@ -4,6 +4,7 @@
  *
  */
 
+const geometry = require('./geometry');
 const events = require('./events');
 const behaviourTypes = require('./controllers/controllers').behaviourTypes;
 
@@ -11,6 +12,10 @@ const Sentinel = function (params) {
 
   const absDifference = function (p1, p2) {
     return Math.abs(p2 - p1);
+  };
+
+  const isBehaviour = function (behaviour, checkList) {
+    return ~checkList.indexOf(behaviour);
   };
 
   const checkReachedGoal = function (state) {
@@ -42,13 +47,23 @@ const Sentinel = function (params) {
         } else {
           return events.AT_OBSTACLE;
         }
-      } else if (!~[behaviourTypes.GoToGoal, behaviourTypes.FollowWall].indexOf(state.currentBehaviour)) {
+      } else if (!isBehaviour(state.currentBehaviour, [behaviourTypes.GoToGoal, behaviourTypes.FollowWall])) {
         return events.CLEARED_OBSTACLE;
       }
     }
   };
 
-  const checks = [checkReachedGoal, checkForObstacles];
+  const progressMade = function (state) {
+    if (state.progressMade) {
+      const distanceToGoal = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
+      const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
+      if (!isBehaviour(state.currentBehaviour, [behaviourTypes.GoToGoal, behaviourTypes.Stop]) && !atObstacle && distanceToGoal < state.progressMade) {
+        return events.PROGRESS_MADE;
+      }
+    }
+  };
+
+  const checks = [checkReachedGoal, checkForObstacles, progressMade];
   const config = params || {
       reachedGoalMargin: 0.1,
       atObstacleMargin: 0.1,
