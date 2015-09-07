@@ -5,6 +5,7 @@ const FollowWall = function (controllers) {
 
   var accumulatedError = 0;
   var previousError = 0;
+  var previousSlide = null;
 
   const followWallDistance = 0.08;
 
@@ -33,17 +34,20 @@ const FollowWall = function (controllers) {
     const leftReading = sumSensorReadings(leftGroup);
     const rightReading = sumSensorReadings(rightGroup);
 
+    const getResult = function (slidingMode, leftGroup, rightGroup) {
+      return {
+        sliding: slidingMode,
+        sensors: slidingMode == controllers.sensorGroups.Right ? rightGroup : leftGroup
+      };
+    };
+
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
-      return {
-        sliding: controllers.sensorGroups.Right,
-        sensors: rightGroup.slice(0, 2)
-      };
+      return getResult(controllers.sensorGroups.Right, leftGroup, rightGroup);
+    } else if (leftReading == rightReading) {
+      return getResult(previousSlide, leftGroup, rightGroup);
     } else {
-      return {
-        sliding: controllers.sensorGroups.Left,
-        sensors: leftGroup.slice(0, 2)
-      };
+      return getResult(controllers.sensorGroups.Left, leftGroup, rightGroup);
     }
   };
 
@@ -100,6 +104,7 @@ const FollowWall = function (controllers) {
   const reset = function () {
     previousError = 0;
     accumulatedError = 0;
+    previousSlide = null;
   };
 
   return {
