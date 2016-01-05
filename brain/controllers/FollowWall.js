@@ -1,7 +1,9 @@
 const geometry = require('../geometry');
 const controlTheory = require('../controlTheory');
+const behaviourTypes = require('./behaviourTypes');
+const sensorGroups = require('./sensorGroups');
 
-const FollowWall = function (controllers) {
+const FollowWall = function () {
 
   var accumulatedError = 0;
   var previousError = 0;
@@ -29,8 +31,8 @@ const FollowWall = function (controllers) {
 
   const getWallSensors = function (sensors) {
     // Group the sensors so we can find out which side the wall is on
-    const leftGroup = getSensorGroup(sensors, [controllers.sensorGroups.Front, controllers.sensorGroups.Left]);
-    const rightGroup = getSensorGroup(sensors, [controllers.sensorGroups.Front, controllers.sensorGroups.Right]);
+    const leftGroup = getSensorGroup(sensors, [sensorGroups.Front, sensorGroups.Left]);
+    const rightGroup = getSensorGroup(sensors, [sensorGroups.Front, sensorGroups.Right]);
     const leftReading = sumSensorReadings(leftGroup);
     const rightReading = sumSensorReadings(rightGroup);
 
@@ -52,13 +54,13 @@ const FollowWall = function (controllers) {
       return {
         sliding: slidingMode,
         lostWall: false,
-        sensors: getSensorsInDirectionOfTravel(slidingMode === controllers.sensorGroups.Right ? rightGroup : leftGroup)
+        sensors: getSensorsInDirectionOfTravel(slidingMode === sensorGroups.Right ? rightGroup : leftGroup)
       };
     };
 
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
-      return getResult(controllers.sensorGroups.Right, leftGroup, rightGroup);
+      return getResult(sensorGroups.Right, leftGroup, rightGroup);
     } else if (leftReading === rightReading) {
       // If readings are the same assume that sensors are not reading anything and
       // start to turn into the wall, assuming that the wall has ended. Turn into the wall by switching
@@ -70,7 +72,7 @@ const FollowWall = function (controllers) {
         lostWall: true
       };
     } else {
-      return getResult(controllers.sensorGroups.Left, leftGroup, rightGroup);
+      return getResult(sensorGroups.Left, leftGroup, rightGroup);
     }
   };
 
@@ -93,7 +95,7 @@ const FollowWall = function (controllers) {
 
     if (sensorResult.lostWall) {
       // TODO attempt to just move towards wall gracefully
-      const thetaError = sensorResult.sliding === controllers.sensorGroups.Right ? -Math.PI / 8 : Math.PI / 8;
+      const thetaError = sensorResult.sliding === sensorGroups.Right ? -Math.PI / 8 : Math.PI / 8;
       accumulatedError += thetaError * state.dt;
 
       const w = controlTheory.pid(thetaError, accumulatedError, (thetaError - previousError) / state.dt);
@@ -155,7 +157,7 @@ const FollowWall = function (controllers) {
   };
 
   return {
-    behaviour: controllers.behaviourTypes.FollowWall,
+    behaviour: behaviourTypes.FollowWall,
     execute: execute,
     reset: reset
   }

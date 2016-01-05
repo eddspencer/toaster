@@ -1,13 +1,13 @@
 const events = require('./events');
-const behaviourTypes = require('./controllers/controllers').behaviourTypes;
+const behaviourTypes = require('./controllers/behaviourTypes');
 
 const Supervisor = function (config) {
   const controllers = config.controllers;
-  var controller = controllers.Stop;
-
-  var state = null;
+  var controller;
+  var state;
 
   const initState = function () {
+    controller = controllers.Stop;
     state = {
       properties: ['x', 'y', 'theta', 'v'],
       dt: config.dt,
@@ -25,6 +25,12 @@ const Supervisor = function (config) {
     };
   };
 
+  /**
+   * Set the current behaviour of the system, only changes if the behaviour is different.
+   *
+   * @param behaviour The new behaviour
+   * @returns {boolean} Whether a change was made
+   */
   const setBehaviour = function (behaviour) {
     if (behaviour !== state.currentBehaviour) {
       const validControllers = controllers.asList.filter(function (controller) {
@@ -39,7 +45,9 @@ const Supervisor = function (config) {
       } else {
         console.error('Unable to get single controller for ' + behaviour + ' got: ' + validControllers);
       }
+      return true;
     }
+    return false;
   };
 
   const setGoal = function (newGoal) {

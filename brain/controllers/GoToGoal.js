@@ -1,14 +1,13 @@
 const controlTheory = require('../controlTheory');
+const geometry = require('../geometry');
+const behaviourTypes = require('./behaviourTypes');
 
-const GoToGoal = function (controllers) {
+const GoToGoal = function () {
   var accumulatedError = 0;
   var previousError = 0;
 
   var execute = function (state) {
-    const relativeToGoal = {
-      x: state.goal.x - state.x,
-      y: state.goal.y - state.y
-    };
+    const relativeToGoal = geometry.createPoint(state.goal.x - state.x, state.goal.y - state.y);
 
     const result = controlTheory.calculateTrajectory(state, relativeToGoal, accumulatedError, previousError);
     const w = result.w;
@@ -21,13 +20,13 @@ const GoToGoal = function (controllers) {
     };
   };
 
-  const reset = function() {
+  const reset = function () {
     previousError = 0;
     accumulatedError = 0;
   };
 
   return {
-    behaviour:  controllers.behaviourTypes.GoToGoal,
+    behaviour: behaviourTypes.GoToGoal,
     execute: execute,
     reset: reset
   };

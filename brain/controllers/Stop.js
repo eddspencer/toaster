@@ -1,6 +1,8 @@
-const Stop = function (controllers) {
+const behaviourTypes = require('./behaviourTypes');
+
+const Stop = function () {
   return {
-    behaviour: controllers.behaviourTypes.Stop,
+    behaviour: behaviourTypes.Stop,
     execute: function () {
       return {
         w: 0,

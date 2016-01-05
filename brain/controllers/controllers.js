@@ -10,32 +10,12 @@ const controllers = {
     const self = this;
     Object.keys(self).forEach(function (key) {
       if (!~['behaviourTypes', 'all', 'sensorGroups'].indexOf(key)) {
-        const controller = new self[key](self);
+        const controller = new self[key]();
         obj[key] = controller;
         obj.asList.push(controller);
       }
     });
     return obj;
-  },
-  behaviourTypes: {
-    Stop: 'Stop',
-    GoToGoal: 'GoToGoal',
-    AvoidObstacle: 'AvoidObstacle',
-    FollowWall: 'FollowWall',
-    asList: function () {
-      const self = this;
-      return Object.keys(self).reduce(function (types, key) {
-        if ('asList' !== key) {
-          types.push(self[key]);
-        }
-        return types;
-      }, []);
-    }
-  },
-  sensorGroups: {
-    Right: 'Right',
-    Left: 'Left',
-    Front: 'Front'
   }
 };
 

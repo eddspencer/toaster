@@ -3,7 +3,8 @@
  */
 
 const mockObstacles = require('./mockObstacles');
-const controllers = require('./../brain/controllers/controllers');
+const behaviourTypes = require('../brain/controllers/behaviourTypes');
+const sensorGroups = require('../brain/controllers/sensorGroups');
 const Supervisor = require('./../brain/Supervisor');
 const Sentinel = require('./../brain/Sentinel');
 const MockSensor = require('./MockSensor');
@@ -15,13 +16,12 @@ const MockEncoder = function (id) {
   }
 };
 
-const MockBot = function () {
-  // TODO alter importance of sensors and add them to configuration
-  const frSensor = new MockSensor('FR', 0.05, -0.02, -Math.PI / 4, controllers.sensorGroups.Right, 1);
-  const flSensor = new MockSensor('FL', 0.05, 0.02, Math.PI / 4, controllers.sensorGroups.Left, 1);
-  const ffSensor = new MockSensor('FF', 0.05, 0, 0, controllers.sensorGroups.Front, 0.5);
-  const brSensor = new MockSensor('BR', -0.05, -0.02, -3 * Math.PI / 4, controllers.sensorGroups.Right, 1);
-  const blSensor = new MockSensor('BL', -0.05, 0.02, 3 * Math.PI / 4, controllers.sensorGroups.Left, 1);
+const MockBot = function (environment) {
+  const frSensor = new MockSensor('FR', 0.05, -0.02, -Math.PI / 4, sensorGroups.Right, 1);
+  const flSensor = new MockSensor('FL', 0.05, 0.02, Math.PI / 4, sensorGroups.Left, 1);
+  const ffSensor = new MockSensor('FF', 0.05, 0, 0, sensorGroups.Front, 0.5);
+  const brSensor = new MockSensor('BR', -0.05, -0.02, -3 * Math.PI / 4, sensorGroups.Right, 1);
+  const blSensor = new MockSensor('BL', -0.05, 0.02, 3 * Math.PI / 4, sensorGroups.Left, 1);
 
   // This order is important for following wall when sensors do not read object
   const sensors = [frSensor, flSensor, ffSensor, brSensor, blSensor];
@@ -30,27 +30,10 @@ const MockBot = function () {
   const rightEncoder = new MockEncoder('R');
   const encoders = [leftEncoder, rightEncoder];
 
-  const supervisor = new Supervisor({
-    controllers: controllers.all(),
-    dt: 0.1, // TODO what units is this?
-    v: 0.025,
-    obstacles: [
-      // TODO have various 'terrains' that you can choose from in the screen
-      mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05),
-      mockObstacles.createRectangle('TopWall', -0.5, 0.5, 0.05, 1)
-      //mockObstacles.createRectangle('Blocker', 0.1, 0.5, 1, 0.05),
-      //mockObstacles.createRectangle('Blocker', -0.15, 0.5, 1, 0.05),
-      //mockObstacles.createRectangle('Blocker', -0.5, 0.15, 0.05, 1),
-      //mockObstacles.createRectangle('Blocker', -0.5, -0.1, 0.05, 1)
-    ],
-    goal: {
-      x: 0.75,
-      y: 0.25
-    },
-    sensors: sensors,
-    encoders: encoders
-  });
+  const config = Object.create(environment);
+  config.sensors = sensors;
+  config.encoders = encoders;
+  const supervisor = new Supervisor(config);
 
   const sentinel = new Sentinel();
 
@@ -62,11 +45,15 @@ const MockBot = function () {
     supervisor.setGoal(newGoal);
   };
 
-  const currentState = function () {
-    const state = supervisor.currentState();
+  const updateSensors = function (state) {
     state.sensors.forEach(function (sensor) {
       sensor.distance = sensor.getDistance(state);
     });
+  };
+
+  const currentState = function () {
+    const state = supervisor.currentState();
+    updateSensors(state);
     supervisor.execute(state);
 
     const events = sentinel.analyse(state);
@@ -83,11 +70,14 @@ const MockBot = function () {
   return {
     // TODO Move this to state? Or move other things to config...
     config: {
-      behaviours: controllers.behaviourTypes.asList()
+      behaviours: behaviourTypes.asList()
     },
+    sensors: sensors,
+    encoders: encoders,
     setBehaviour: setBehaviour,
     setGoal: setGoal,
     currentState: currentState,
+    updateSensors: updateSensors,
     reset: reset
   };
 };

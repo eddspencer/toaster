@@ -54,7 +54,6 @@ const MockSensor = function (id, x, y, theta, group, importance) {
     theta: theta,
     group: group,
     importance: importance,
-    distance: maxSensorDistance,
     maxSensorDistance: maxSensorDistance,
     getVector: getVector,
     getDistance: getDistance
