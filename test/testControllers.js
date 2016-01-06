@@ -76,10 +76,8 @@ describe('Follow Wall Controller', function () {
 
   const result = controller.execute(fwState);
 
-  // TODO also test when coming to wall from angle, lost wall, and progress made
-
   it('should turn the bot to follow the wall', function () {
-    expect(result.w).to.not.equal(0);
+    expect(result.w, "Turn right, wall on left").to.be.negtive;
     expect(result.v).to.equal(fwState.v);
   });
 
@@ -105,6 +103,25 @@ describe('Follow Wall Controller', function () {
     expect(fwState.followWallPerpendicular.end, "Horizontal line").to.eql(geometry.createPoint(0.1, 0));
   });
 
+  it('should follow wall on right if angled correctly', function () {
+    const fwAngleState = Object.create(fwState);
+    fwAngleState.theta = Math.PI / 4; // 45 degrees up so follow vertical wall on right
+    mockBot.updateSensors(fwAngleState);
+
+    const result = controller.execute(fwAngleState);
+    expect(result.w, "Turn left, wall on right").to.be.positive;
+    expect(result.v).to.equal(fwState.v);
+  });
+
+  it('should move towards wall when wall is lost', function () {
+    const fwAngleState = Object.create(fwState);
+    fwAngleState.theta = Math.PI; // 180 degree turn on spot to loose wall
+    mockBot.updateSensors(fwAngleState);
+
+    const result = controller.execute(fwAngleState);
+    expect(result.w, "Turn left, wall on right").to.be.positive;
+    expect(result.v).to.equal(fwState.v);
+  });
 });
 
 describe('Stop Controller', function () {

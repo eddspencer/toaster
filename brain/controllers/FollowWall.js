@@ -77,7 +77,7 @@ const FollowWall = function () {
         lostWall: true
       };
     } else {
-      // Bot has a tendency to turn left, who doesn't!
+      // Bot has a tendency to turn right (sensors on left), who doesn't!
       return getResult(sensorGroups.Left, leftGroup, rightGroup);
     }
   };
@@ -100,7 +100,7 @@ const FollowWall = function () {
     previousSlide = sensorResult.sliding;
 
     if (sensorResult.lostWall) {
-      // TODO attempt to just move towards wall gracefully
+      // attempt to just move towards wall gracefully
       const thetaError = sensorResult.sliding === sensorGroups.Right ? -Math.PI / 8 : Math.PI / 8;
       accumulatedError += thetaError * state.dt;
 
@@ -112,7 +112,6 @@ const FollowWall = function () {
         v: state.v
       };
     } else {
-
       const p1 = getSensorReadingPoint(state, sensorResult.sensors[0]);
       const p2 = getSensorReadingPoint(state, sensorResult.sensors[1]);
 
