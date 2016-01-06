@@ -45,6 +45,10 @@ const MockBot = function (environment) {
     supervisor.setGoal(newGoal);
   };
 
+  /**
+   * Updated the sensor objects with the latest readings, this is a separate
+   * step so it can be controlled and done only once per iteration for performance
+   */
   const updateSensors = function (state) {
     state.sensors.forEach(function (sensor) {
       sensor.distance = sensor.getDistance(state);

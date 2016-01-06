@@ -17,7 +17,7 @@ const FollowWall = function () {
       return ~sensorGroups.indexOf(sensor.group);
     });
 
-    // Sort them with smallest reading first and largest importance first
+    // Sort them with smallest reading first
     return group.sort(function (s1, s2) {
       return s1.distance - s2.distance;
     });
@@ -41,6 +41,7 @@ const FollowWall = function () {
         const twoClosestSensors = sensors.slice(0, 2);
 
         // Ensure sensors are ordered correctly for direction of travel
+        // TODO have this order configurable inside the sensor
         return ['FF', 'FR', 'FL', 'BR', 'BL'].reduce(function (ordered, id) {
           twoClosestSensors.forEach(function (sensor) {
             if (id === sensor.id) {
@@ -58,10 +59,14 @@ const FollowWall = function () {
       };
     };
 
+    // Can be heading directly into wall, so test for this
+    const frontSensor = getSensorGroup(sensors, [sensorGroups.Front]);
+    const wallInFront = frontSensor ? frontSensor[0].distance < frontSensor[0].maxSensorDistance : false;
+
     // Return 2 sensors that are closest to the wall on the correct side
     if (leftReading > rightReading) {
       return getResult(sensorGroups.Right, leftGroup, rightGroup);
-    } else if (leftReading === rightReading) {
+    } else if (leftReading === rightReading && !wallInFront) {
       // If readings are the same assume that sensors are not reading anything and
       // start to turn into the wall, assuming that the wall has ended. Turn into the wall by switching
       // sensor groups around
@@ -72,6 +77,7 @@ const FollowWall = function () {
         lostWall: true
       };
     } else {
+      // Bot has a tendency to turn left, who doesn't!
       return getResult(sensorGroups.Left, leftGroup, rightGroup);
     }
   };

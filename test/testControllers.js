@@ -58,7 +58,7 @@ describe('Go To Goal Controller', function () {
   const controller = new controllers.GoToGoal();
 
   it('should create a new trajectory towards goal', function () {
-    const relativeToGoal = geometry.createPoint(1, 2);
+    const relativeToGoal = geometry.createPoint(1, 3);
     const expectedW = controlTheory.calculateTrajectory(state, relativeToGoal, 0, 0).w;
 
     const result = controller.execute(state);
@@ -70,23 +70,39 @@ describe('Go To Goal Controller', function () {
 
 describe('Follow Wall Controller', function () {
   const controller = new controllers.FollowWall();
-  const result = controller.execute(state);
+  const fwState = Object.create(state);
+  fwState.sensors = mockBot.sensors;
+  mockBot.updateSensors(fwState);
+
+  const result = controller.execute(fwState);
+
+  // TODO also test when coming to wall from angle, lost wall, and progress made
 
   it('should turn the bot to follow the wall', function () {
-    expect(result.w).to.equal(0);
-    expect(result.v).to.equal(state.v);
+    expect(result.w).to.not.equal(0);
+    expect(result.v).to.equal(fwState.v);
+  });
+
+  it('should set the progress made, how close it is to goal when starting to follow', function () {
+    const distanceToGoal = geometry.norm(fwState.goal);
+    expect(fwState.progressMade).to.equal(distanceToGoal);
   });
 
   it('should map the segment of the wall correctly', function () {
-    expect(state.wallSegment).to.equal([0, 0]);
+    expect(fwState.wallSegment.start.x, "Start of vertical wall at 0.1").to.equal(0.1);
+    expect(fwState.wallSegment.start.y, "From left sensor").to.be.positive;
+    expect(fwState.wallSegment.end.x, "End of vertical wall at 0.1").to.equal(0.1);
+    expect(fwState.wallSegment.end.y, "From left sensor").to.equal(0);
   });
 
-  it('should calculate the follow wall trajectory', function () {
-    expect(state.followWall).to.equal([0, 0]);
+  it('should calculate the follow wall trajectory parallel to the wall', function () {
+    expect(fwState.followWall.start, "Start at bot").to.eql(geometry.createPoint(0, 0));
+    expect(fwState.followWall.end, "Vertical line").to.eql(geometry.createPoint(0, -0.1));
   });
 
-  it('should calculate the trajectory perpendicular to the wall', function () {
-    expect(state.followWallPerpendicular).to.equal([0, 0]);
+  it('should calculate the trajectory perpendicular and away from the wall', function () {
+    expect(fwState.followWallPerpendicular.start, "Start at bot").to.eql(geometry.createPoint(0, 0));
+    expect(fwState.followWallPerpendicular.end, "Horizontal line").to.eql(geometry.createPoint(0.1, 0));
   });
 
 });
