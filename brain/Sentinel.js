@@ -6,7 +6,7 @@
 
 const geometry = require('./geometry');
 const events = require('./events');
-const behaviourTypes = require('./controllers/controllers').behaviourTypes;
+const behaviourTypes = require('./controllers/behaviourTypes');
 
 const Sentinel = function (params) {
 
@@ -56,7 +56,7 @@ const Sentinel = function (params) {
   const progressMade = function (state) {
     if (state.progressMade) {
       const distanceToGoal = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
-      const atObstacle = isObstacleWithin(state.sensors, config.atObstacleMargin);
+      const atObstacle = isObstacleWithin(state.sensors, config.unsafeMargin);
       if (!isBehaviour(state.currentBehaviour, [behaviourTypes.GoToGoal, behaviourTypes.Stop]) && !atObstacle && distanceToGoal < state.progressMade) {
         return events.PROGRESS_MADE;
       }

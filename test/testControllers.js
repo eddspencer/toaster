@@ -8,34 +8,9 @@ const controlTheory = require('../brain/controlTheory');
 const sensorGroups = require('../brain/controllers/sensorGroups');
 const geometry = require('../brain/geometry');
 const mockObstacles = require('../mocks/mockObstacles');
-const MockBot = require('../mocks/MockBot');
-const MockSensor = require('../mocks/MockSensor');
-
-const environment = {
-  controllers: controllers.all()
-};
-const mockBot = new MockBot(environment);
-
-/**
- * X and Y in the location of bot in space, theta is the angle from the X axis.
- */
-const state = {
-  x: 0,
-  y: 0,
-  theta: 0,
-  goal: {
-    x: 1,
-    y: 3
-  },
-  obstacles: [
-    mockObstacles.createRectangle('Blocker', 0.1, 0.1, 0.2, 0.05) // Wall directly in front of bot
-  ],
-  sensors: [
-    new MockSensor('Front', 0, 0, 0, sensorGroups.Front, 1),
-    new MockSensor('Back', 0, 0, Math.PI, sensorGroups.Back, 1)
-  ],
-  dt: 0.01
-};
+const testUtils = require('./testUtils');
+const mockBot = testUtils.mockBot();
+const state = testUtils.state();
 
 describe('Avoid Obstacle Controller', function () {
   const controller = new controllers.AvoidObstacle();

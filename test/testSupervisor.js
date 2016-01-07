@@ -9,8 +9,6 @@ describe('Supervior', function () {
     controllers: controllers.all(),
     dt: 0.1,
     v: 0.025,
-
-    // TODO separate the bot and environment configurations
     obstacles: [
       mockObstacles.createRectangle('LeftWall', -0.5, 0.5, 1, 0.05),
       mockObstacles.createRectangle('RightWall', 0.5, 0.5, 1, 0.05),

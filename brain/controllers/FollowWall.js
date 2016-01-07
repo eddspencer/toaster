@@ -8,6 +8,7 @@ const FollowWall = function () {
   var accumulatedError = 0;
   var previousError = 0;
   var previousSlide = null;
+  var progressMade = 0;
 
   const followWallDistance = 0.1;
 
@@ -88,8 +89,10 @@ const FollowWall = function () {
   };
 
   const setProgressMade = function (state) {
-    if (!state.progressMade) {
-      state.progressMade = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
+    // Only set the progress made once at the start of following wall
+    if (!progressMade) {
+      progressMade = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
+      state.progressMade = progressMade;
     }
   };
 
@@ -159,6 +162,7 @@ const FollowWall = function () {
     previousError = 0;
     accumulatedError = 0;
     previousSlide = null;
+    progressMade = 0;
   };
 
   return {
