@@ -92,6 +92,9 @@ describe('Navigation', function () {
   it('should reach goal eventually for all successful environments', function () {
     const results = runEnvironments('./test/resources/environments/successful');
     fs.writeFileSync("test/results/navigationSuccess.json", JSON.stringify(results));
+
+ss
+
     expect(results.errors, "All runs should finish").to.eql([]);
   });
 
