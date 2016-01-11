@@ -98,15 +98,15 @@ const RobotCanvas = function (canvasId) {
     context.lineJoin = "round";
     context.lineWidth = drawConfig.pathThickness / scale;
 
-    const path = new Path2D();
-    path.moveTo(canvas.width / 2, canvas.height / 2);
+    context.beginPath();
+    context.moveTo(canvas.width / 2, canvas.height / 2);
 
     for (var i = 0; i < xPath.length; i++) {
       var translated = translateAndScale(xPath[i], yPath[i]);
-      path.lineTo(translated.x, translated.y);
+      context.lineTo(translated.x, translated.y);
     }
 
-    context.stroke(path);
+    context.stroke();
   }
 
   function drawRobot(x, y, theta) {
@@ -116,10 +116,8 @@ const RobotCanvas = function (canvasId) {
 
     // convert to robot coordinates
     drawRotated(x, y, Math.PI / 2 - theta, function () {
-      const pathRobot = new Path2D();
-      pathRobot.rect(-width / 2, -length / 2, width, length);
       context.fillStyle = drawConfig.robotColour;
-      context.fill(pathRobot);
+      context.fillRect(-width / 2, -length / 2, width, length);
     });
   }
 
@@ -132,46 +130,40 @@ const RobotCanvas = function (canvasId) {
         const sensorY = -scaleValue(sensor.x);
 
         drawRotated(sensorX, sensorY, -sensor.theta - Math.PI / 2, function () {
-          const pathSensor = new Path2D();
-          pathSensor.moveTo(0, 0);
+          context.beginPath();
+          context.moveTo(0, 0);
 
           const h = scaleValue(sensor.distance);
 
-          pathSensor.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
-          pathSensor.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
+          context.lineTo(Math.cos(drawConfig.sensorConeTheta) * h, Math.sin(drawConfig.sensorConeTheta) * h);
+          context.lineTo(Math.cos(-drawConfig.sensorConeTheta) * h, Math.sin(-drawConfig.sensorConeTheta) * h);
 
           const active = sensor.maxSensorDistance > sensor.distance;
           context.fillStyle = active ? drawConfig.sensorActiveColour : drawConfig.sensorColour;
-          context.fill(pathSensor);
+          context.fill();
         });
       });
     });
   }
 
   function drawGoal(goal) {
-    const path = new Path2D();
     const translated = translateAndScale(goal.x, goal.y);
-    path.rect(translated.x, translated.y, drawConfig.goalThickness, drawConfig.goalThickness);
     context.fillStyle = drawConfig.goalColour;
-    context.fill(path);
+    context.fillRect(translated.x, translated.y, drawConfig.goalThickness, drawConfig.goalThickness);
   }
 
   function drawObstacles(obstacles) {
     obstacles.forEach(function (obstacle) {
       switch (obstacle.type) {
         case 'Rectangle' :
-          const pathRobot = new Path2D();
-
           const translated = translateAndScale(obstacle.x, obstacle.y);
-
-          pathRobot.rect(
+          context.fillStyle = drawConfig.obstacleColour;
+          context.fillRect(
             translated.x,
             translated.y,
             scaleValue(obstacle.width),
             scaleValue(obstacle.length)
           );
-          context.fillStyle = drawConfig.obstacleColour;
-          context.fill(pathRobot);
           break;
         default:
           console.log('Unknown obstacle type: ' + obstacle);
@@ -183,28 +175,29 @@ const RobotCanvas = function (canvasId) {
   function drawVectorRobotFrame(x, y, theta, vector, colour) {
     if (vector) {
       drawRotated(x, y, Math.PI / 2 - theta, function () {
-        const pathVector = new Path2D();
-        pathVector.moveTo(-scaleValue(vector.start.y), -scaleValue(vector.start.x));
-        pathVector.lineTo(-scaleValue(vector.end.y), -scaleValue(vector.end.x));
+        context.beginPath();
+        context.moveTo(-scaleValue(vector.start.y), -scaleValue(vector.start.x));
+        context.lineTo(-scaleValue(vector.end.y), -scaleValue(vector.end.x));
 
         context.strokeStyle = colour;
         context.lineWidth = drawConfig.pathThickness / scale;
-        context.stroke(pathVector);
+        context.stroke();
       });
     }
   }
 
   function drawVector(vector, colour) {
     if (vector) {
-      const pathVector = new Path2D();
+      context.beginPath();
+
       const translatedStart = translateAndScale(vector.start.x, vector.start.y);
       const translatedEnd = translateAndScale(vector.end.x, vector.end.y);
-      pathVector.moveTo(translatedStart.x, translatedStart.y);
-      pathVector.lineTo(translatedEnd.x, translatedEnd.y);
+      context.moveTo(translatedStart.x, translatedStart.y);
+      context.lineTo(translatedEnd.x, translatedEnd.y);
 
       context.strokeStyle = colour;
       context.lineWidth = drawConfig.pathThickness / scale;
-      context.stroke(pathVector);
+      context.stroke();
     }
   }
 
