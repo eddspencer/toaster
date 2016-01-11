@@ -11,8 +11,8 @@ var createRectangle = function (id, x, y, length, width) {
     type: obstacleTypes.RECTANGLE,
     x: x,
     y: y,
-    width: width,
-    length: length
+    length: length,
+    width: width
   }
 };
 

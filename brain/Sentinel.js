@@ -67,7 +67,7 @@ const Sentinel = function (params) {
   const config = params || {
       reachedGoalMargin: 0.1,
       atObstacleMargin: 0.15,
-      unsafeMargin: 0.05
+      unsafeMargin: 0.03
     };
 
   const analyse = function (state) {

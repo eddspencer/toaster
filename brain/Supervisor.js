@@ -55,8 +55,6 @@ const Supervisor = function (config) {
   };
 
   const processEvents = function (currentEvents) {
-    // TODO move this switch statement into configuration
-    // TODO only do one behaviour from event....
     currentEvents.forEach(function (event) {
       switch (event) {
         case events.AT_GOAL:

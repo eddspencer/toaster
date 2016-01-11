@@ -109,6 +109,12 @@
     robotCanvas.setCentre("on" === event.currentTarget.value);
   });
 
+  $('#debug').change(function(event) {
+    socket.send(JSON.stringify({
+      setDebug: event.currentTarget.value
+    }));
+  });
+
   $('#draw').click(function (event) {
     updateGoal(event.offsetX, event.offsetY);
   });

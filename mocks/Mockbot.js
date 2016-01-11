@@ -2,12 +2,13 @@
  * Mock robot with state for use in testing
  */
 
-const mockObstacles = require('./mockObstacles');
 const behaviourTypes = require('../brain/controllers/behaviourTypes');
 const sensorGroups = require('../brain/controllers/sensorGroups');
 const Supervisor = require('./../brain/Supervisor');
 const Sentinel = require('./../brain/Sentinel');
 const MockSensor = require('./MockSensor');
+const VoiceBox = require('../brain/Voicebox');
+const controllers = require('../brain/controllers/controllers');
 
 const MockEncoder = function (id) {
   return {
@@ -33,9 +34,13 @@ const MockBot = function (environment) {
   const config = Object.create(environment);
   config.sensors = sensors;
   config.encoders = encoders;
+  config.controllers = controllers.all();
+  config.dt = 0.1;
+  config.v = 0.025;
   const supervisor = new Supervisor(config);
 
   const sentinel = new Sentinel();
+  const voiceBox = new VoiceBox();
 
   const setBehaviour = function (newBehaviour) {
     supervisor.setBehaviour(newBehaviour);
@@ -43,6 +48,10 @@ const MockBot = function (environment) {
 
   const setGoal = function (newGoal) {
     supervisor.setGoal(newGoal);
+  };
+
+  const setDebug = function (debug) {
+    voiceBox.debugFlag = debug;
   };
 
   /**
@@ -55,12 +64,16 @@ const MockBot = function (environment) {
     });
   };
 
+  // TODO this is a cheat to get the bot to tick when state is calculated
   const currentState = function () {
     const state = supervisor.currentState();
     updateSensors(state);
     supervisor.execute(state);
 
     const events = sentinel.analyse(state);
+    if (events.length > 0) {
+      voiceBox.debug("Events: " + events);
+    }
     supervisor.processEvents(events);
 
     return state;
@@ -80,6 +93,7 @@ const MockBot = function (environment) {
     encoders: encoders,
     setBehaviour: setBehaviour,
     setGoal: setGoal,
+    setDebug: setDebug,
     currentState: currentState,
     updateSensors: updateSensors,
     reset: reset
