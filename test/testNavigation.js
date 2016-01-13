@@ -23,7 +23,9 @@ describe('Navigation', function () {
       // Keep track of the position through the run
       result.path.push({
         x: state.x,
-        y: state.y
+        y: state.y,
+        theta: state.theta,
+        sensors: JSON.parse(JSON.stringify(state.sensors))
       });
       result.currentBehaviour = state.currentBehaviour;
 
@@ -42,6 +44,9 @@ describe('Navigation', function () {
       environment.x = startPosition[0];
       environment.y = startPosition[1];
       const run = runBot(environment, behaviourTypes.GoToGoal, behaviourTypes.Stop);
+      run.obstacles = environment.obstacles;
+      run.goal = environment.goal;
+
       if (run.success) {
         result.successful.push(run);
       } else {
@@ -89,18 +94,23 @@ describe('Navigation', function () {
     return resultsFlat;
   };
 
+  function toFile(name, json, variable) {
+    var content = JSON.stringify(json);
+    if (variable) {
+      content = "var " + variable + " = " + content;
+    }
+    fs.writeFileSync(name, content);
+  }
+
   it('should reach goal eventually for all successful environments', function () {
     const results = runEnvironments('./test/resources/environments/successful');
-    fs.writeFileSync("test/results/navigationSuccess.json", JSON.stringify(results));
-
-ss
-
+    toFile("test/results/navigationSuccess.js", results, "navigationSuccess");
     expect(results.errors, "All runs should finish").to.eql([]);
   });
 
   it('should not reach goal for all successful environments', function () {
     const results = runEnvironments('./test/resources/environments/failures');
-    fs.writeFileSync("test/results/navigationFailures.json",JSON.stringify(results));
+    toFile("test/results/navigationFailures.js", results, "navigationFailure");
     expect(results.success, "All runs should not finish").to.eql([]);
   });
 

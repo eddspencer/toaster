@@ -1,6 +1,7 @@
 (function () {
   var socket = initSocket(document.currentScript.getAttribute('host'));
-  var robotCanvas = new RobotCanvas(document.currentScript.getAttribute('canvas'));
+  var canvas = document.getElementById(document.currentScript.getAttribute('canvas'));
+  var robotCanvas = new RobotCanvas(canvas);
 
   function initSocket(host) {
     var socket = new LazyWebSocket('ws://' + host);

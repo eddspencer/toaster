@@ -1,0 +1,75 @@
+<html>
+<head>
+    <style>
+        .result {
+            display: inline-block;
+        }
+        .result canvas {
+            margin: 5px;
+        }
+        .success {
+            border: 2px solid green;
+        }
+        .failure {
+            border: 2px solid red;
+        }
+    </style>
+	<script type="text/javascript"  src="../../../public/javascripts/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript"  src="../../../public/javascripts/robotcanvas.js"></script>
+	<script type="text/javascript"  src="../navigationFailures.js"></script>
+	<script type="text/javascript"  src="../navigationSuccess.js"></script>
+	<script type="text/javascript">
+    	$(window).load(function () {
+        	processResults(navigationSuccess, true);
+        	processResults(navigationFailure, false);
+    	});
+
+    	function processResults(results, expectSuccess) {
+            function addResult(result, success) {
+                 result.runs.forEach(function(run) {
+                    run.success = success;
+                    run.environment = result.environment;
+                    createCanvas($(expectSuccess ? "#success" : "#failure"), run);
+                });
+            }
+    		results.success.forEach(function (result) {
+                addResult(result, true);
+            });
+        	results.errors.forEach(function (result) {
+                addResult(result, false);
+            });
+    	}
+
+    	function createCanvas(parent, run) {
+            var name = run.environment + " (" + run.start.x + ", " + run.start.y + ")";
+            var id = run.environment + run.start.x + run.start.y;
+            var component = $('<div class="result"><h3>' + name + '</h3><canvas id="' + id + '"/></div>');
+            parent.append(component);
+    		var canvas = $("#" + id);
+            canvas.addClass(run.success ? "success" : "failure");
+    		drawResult(canvas[0], run);
+    	}
+
+    	function drawResult(canvas, run) {
+    		var robotCanvas = new RobotCanvas(canvas);
+            robotCanvas.initialise();
+            run.path.forEach(function (state, i) {
+                robotCanvas.updateState(state);
+
+                // Only redraw on last iteration, others just update the path
+                if  (i === run.path.length -1) {
+                    state.obstacles = run.obstacles;
+                    state.goal = run.goal;
+                    robotCanvas.redraw(state);
+                }
+            });
+    	}
+	</script>
+</head>
+<body>
+	<h1>Expect Success</h1>
+	<div id="success"></div>
+	<h1>Expect Failure</h1>
+	<div id="failure"></div>
+</body>
+</html>

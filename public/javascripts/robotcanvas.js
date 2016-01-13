@@ -2,7 +2,7 @@
  * Define a canvas that draws the robot, its path sensors and obstacles. The coordinate system is centered on the robot itself
  * and the units are in meters.
  */
-const RobotCanvas = function (canvasId) {
+const RobotCanvas = function (canvas) {
 
   const drawConfig = {
     initialScale: 2,
@@ -24,10 +24,9 @@ const RobotCanvas = function (canvasId) {
   var xPath, yPath = null;
   var scale = drawConfig.initialScale;
   var centre = false;
-  const context = initCanvas(canvasId);
+  const context = initCanvas(canvas);
 
-  function initCanvas(canvasId) {
-    const canvas = document.getElementById(canvasId);
+  function initCanvas(canvas) {
     const context = canvas.getContext("2d");
 
     const length = 400; // canvas.parentElement.clientWidth;
