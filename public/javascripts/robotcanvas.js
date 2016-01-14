@@ -98,11 +98,14 @@ const RobotCanvas = function (canvas) {
     context.lineWidth = drawConfig.pathThickness / scale;
 
     context.beginPath();
-    context.moveTo(canvas.width / 2, canvas.height / 2);
 
     for (var i = 0; i < xPath.length; i++) {
       var translated = translateAndScale(xPath[i], yPath[i]);
-      context.lineTo(translated.x, translated.y);
+      if (i === 0) {
+        context.moveTo(translated.x, translated.y);
+      } else {
+        context.lineTo(translated.x, translated.y);
+      }
     }
 
     context.stroke();
