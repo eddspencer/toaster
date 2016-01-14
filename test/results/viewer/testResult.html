@@ -6,12 +6,13 @@
         }
         .result canvas {
             margin: 5px;
+            border-radius: 4px;
         }
         .success {
-            border: 2px solid green;
+            border: 4px solid green;
         }
         .failure {
-            border: 2px solid red;
+            border: 4px solid red;
         }
     </style>
 	<script type="text/javascript"  src="../../../public/javascripts/jquery-2.1.3.min.js"></script>
@@ -19,6 +20,8 @@
 	<script type="text/javascript"  src="../navigationFailures.js"></script>
 	<script type="text/javascript"  src="../navigationSuccess.js"></script>
 	<script type="text/javascript">
+        var count = 0;
+
     	$(window).load(function () {
         	processResults(navigationSuccess, true);
         	processResults(navigationFailure, false);
@@ -42,7 +45,7 @@
 
     	function createCanvas(parent, run) {
             var name = run.environment + " (" + run.start.x + ", " + run.start.y + ")";
-            var id = run.environment + run.start.x + run.start.y;
+            var id = run.environment + (count++);
             var component = $('<div class="result"><h3>' + name + '</h3><canvas id="' + id + '"/></div>');
             parent.append(component);
     		var canvas = $("#" + id);

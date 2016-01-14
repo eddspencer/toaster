@@ -55,9 +55,8 @@ const Sentinel = function (params) {
 
   const progressMade = function (state) {
     if (state.progressMade) {
-      const distanceToGoal = geometry.norm(geometry.createPoint(state.goal.x - state.x, state.goal.y, state.y));
-      const atObstacle = isObstacleWithin(state.sensors, config.unsafeMargin);
-      if (!isBehaviour(state.currentBehaviour, [behaviourTypes.GoToGoal, behaviourTypes.Stop]) && !atObstacle && distanceToGoal < state.progressMade) {
+      const distanceToGoal = geometry.distanceBetweenPoints(state.goal, state);
+      if (!isBehaviour(state.currentBehaviour, [behaviourTypes.GoToGoal, behaviourTypes.Stop]) && distanceToGoal + config.epsilonProgressMade < state.progressMade) {
         return events.PROGRESS_MADE;
       }
     }
@@ -67,7 +66,8 @@ const Sentinel = function (params) {
   const config = params || {
       reachedGoalMargin: 0.1,
       atObstacleMargin: 0.15,
-      unsafeMargin: 0.03
+      unsafeMargin: 0.03,
+      epsilonProgressMade: 0.15
     };
 
   const analyse = function (state) {

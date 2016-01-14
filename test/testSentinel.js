@@ -29,12 +29,11 @@ describe('Sentinel', function () {
     expect(result).to.contain(events.PROGRESS_MADE);
   });
 
-  it('should not make progress if at unsafe distance to obstacle', function () {
+  it('should not make progress until epsilon progress made is reached', function () {
     const state = testUtils.state();
     state.currentBehaviour = behaviourTypes.FollowWall;
-    state.progressMade = 100;
-    state.x = 0.09;
-    mockBot.updateSensors(state);
+    state.progressMade = 1.05;
+    state.x = 1;
     const result = sentinel.analyse(state);
     expect(result).to.not.contain(events.PROGRESS_MADE);
   });

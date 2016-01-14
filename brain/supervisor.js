@@ -3,6 +3,13 @@ const behaviourTypes = require('./controllers/behaviourTypes');
 
 const Supervisor = function (config) {
   const controllers = config.controllers;
+  const eventConfig = config.eventConfig || {
+    "AT_GOAL": {weighting: 100, behaviour: behaviourTypes.Stop},
+    "UNSAFE": {weighting: 90, behaviour: behaviourTypes.AvoidObstacle},
+    "AT_OBSTACLE": {weighting: 80, behaviour: behaviourTypes.FollowWall},
+    "CLEARED_OBSTACLE": {weighting: 0, behaviour: behaviourTypes.GoToGoal},
+    "PROGRESS_MADE": {weighting: 0, behaviour: behaviourTypes.GoToGoal}
+  };
   var controller;
   var state;
 
@@ -17,8 +24,8 @@ const Supervisor = function (config) {
       encoders: config.encoders,
       goal: config.goal,
       currentBehaviour: controller.behaviour,
-      x: 0,
-      y: 0,
+      x: config.x || 0,
+      y: config.y || 0,
       dx: 0,
       dy: 0,
       theta: Math.PI / 4
@@ -42,6 +49,7 @@ const Supervisor = function (config) {
         controller.reset();
         controller = validControllers[0];
         state.currentBehaviour = controller.behaviour;
+        state.progressMade = null; // Changing behaviour resets any progress you may have had in previous state
       } else {
         console.error('Unable to get single controller for ' + behaviour + ' got: ' + validControllers);
       }
@@ -54,26 +62,18 @@ const Supervisor = function (config) {
     state.goal = newGoal;
   };
 
-  const processEvents = function (currentEvents) {
-    currentEvents.forEach(function (event) {
-      switch (event) {
-        case events.AT_GOAL:
-          setBehaviour(behaviourTypes.Stop);
-          break;
-        case events.AT_OBSTACLE:
-          setBehaviour(behaviourTypes.FollowWall);
-          break;
-        case events.UNSAFE:
-          setBehaviour(behaviourTypes.AvoidObstacle);
-          break;
-        case events.CLEARED_OBSTACLE:
-          setBehaviour(behaviourTypes.GoToGoal);
-          break;
-        case events.PROGRESS_MADE:
-          setBehaviour(behaviourTypes.GoToGoal);
-          break;
-      }
+  const sortEvents = function(events) {
+    return events.sort(function(e1, e2) {
+        return eventConfig[e2].weighting - eventConfig[e1].weighting;
     });
+  };
+
+  const processEvents = function (currentEvents) {
+    if (currentEvents.length > 0) {
+      const sorted = sortEvents(currentEvents);
+      const behaviour = eventConfig[sorted[0]].behaviour;
+      setBehaviour(behaviour);
+    }
   };
 
   const reset = function () {

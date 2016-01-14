@@ -15,6 +15,8 @@ describe('Navigation', function () {
       path: []
     };
 
+    console.log('Strting environment ' + environment.name + " (" + environment.x + ", " + environment.y + ")");
+
     const bot = new MockBot(environment);
     // bot.setDebug(true);
     bot.setBehaviour(startBehaviour);
@@ -30,7 +32,7 @@ describe('Navigation', function () {
       result.currentBehaviour = state.currentBehaviour;
 
       // Run until reached desired behaviour
-      if (desiredBehaviour == state.currentBehaviour) {
+      if (desiredBehaviour === state.currentBehaviour) {
         result.success = true;
         break;
       }
