@@ -1,0 +1,68 @@
+{
+  "name": "SmallMaze",
+  "startPositions": [
+    [-0.75, 0]
+  ],
+  "obstacles": [
+      {
+      "id": "LeftWall",
+      "type": "Rectangle",
+      "x": -1,
+      "y": 1,
+      "length": 2,
+      "width": 0.05
+    },
+    {
+      "id": "RightWall",
+      "type": "Rectangle",
+      "x": 0.95,
+      "y": 0.95,
+      "length": 2,
+      "width": 0.05
+    },
+    {
+      "id": "TopWall",
+      "type": "Rectangle",
+      "x": -1,
+      "y": 1,
+      "length": 0.05,
+      "width": 2
+    },
+    {
+      "id": "BottomWall",
+      "type": "Rectangle",
+      "x": -0.95,
+      "y": -0.95,
+      "length": 0.05,
+      "width": 2.05
+    },
+    {
+      "id": "LeftBlock",
+      "type": "Rectangle",
+      "x": -0.5,
+      "y": 1,
+      "length": 1.7,
+      "width": 0.05
+    },
+    {
+      "id": "MiddleBlock",
+      "type": "Rectangle",
+      "x": 0,
+      "y": -1,
+      "length": -1.7,
+      "width": 0.05
+    },
+    {
+      "id": "RightBlock",
+      "type": "Rectangle",
+      "x": 0.5,
+      "y": 1,
+      "length": 1.7,
+      "width": 0.05
+    }
+  ],
+  "goal": {
+    "x": 0.75,
+    "y": 0
+  }
+}

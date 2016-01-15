@@ -1,0 +1,56 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../public/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/stylesheets/style.css">
+
+	<script type="text/javascript"  src="../public/javascripts/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript"  src="../public/javascripts/robotmonitor.js"></script>
+	<script type="text/javascript"  src="../public/javascripts/robotcanvas.js"></script>
+    <script type="text/javascript"  src="modelBundle.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Toaster</h1>
+    <canvas id="draw" resize="true"></canvas>
+    <div>
+        <button id="connect" class="btn btn-default">Start</button>
+    </div>
+    <div>
+        <span class="spanLabel">Debug</span>
+        <input id="debug" type="checkbox">
+    </div>
+    <div>
+        <span class="spanLabel">Behaviours</span>
+        <span id="behaviours"></span>
+    </div>
+    <div>
+        <span class="spanLabel">Scale (m)</span>
+        <input id="scale" type="number" value="2">
+    </div>
+    <div>
+        <span class="spanLabel">Centre bot</span>
+        <input id="centre" type="checkbox">
+    </div>
+    <h2>Current State</h2>
+    <table id="properties" class="table-condensed table-bordered">
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </table>
+    <div class="tableReading">
+        <h3>Sensor readings</h3>
+        <table id="sensors" class="table-condensed table-bordered">
+            <tr>
+                <th>Name</th>
+                <th>Distance(m)</th>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+        var canvas = document.getElementById("draw");
+        var robotMonitor = new RobotMonitor(canvas);
+        var modelTester = new ModelTester(robotMonitor);
+    </script>
+</body>
+</html>

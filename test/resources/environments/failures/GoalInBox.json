@@ -1,0 +1,44 @@
+{
+  "name": "TrappedInBox",
+  "startPositions": [
+    [0.75, 0.25]
+  ],
+  "obstacles": [
+    {
+      "id": "LeftWall",
+      "type": "Rectangle",
+      "x": -0.5,
+      "y": 0.5,
+      "length": 1,
+      "width": 0.05
+    },
+    {
+      "id": "RightWall",
+      "type": "Rectangle",
+      "x": 0.5,
+      "y": 0.5,
+      "length": 1,
+      "width": 0.05
+    },
+    {
+      "id": "TopWall",
+      "type": "Rectangle",
+      "x": -0.5,
+      "y": 0.5,
+      "length": 0.05,
+      "width": 1
+    },
+    {
+      "id": "BottomWall",
+      "type": "Rectangle",
+      "x": -0.5,
+      "y": -0.5,
+      "length": 0.05,
+      "width": 1.05
+    }
+  ],
+  "goal": {
+    "x": 0,
+    "y": 0
+  }
+}

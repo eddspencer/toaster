@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --recursive test"
+    "test": "mocha --recursive test",
+    "browserify": "browserify client/modelTester.js -o client/modelBundle.js"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
