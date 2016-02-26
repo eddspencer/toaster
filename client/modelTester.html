@@ -1,11 +1,11 @@
 <html>
 <head>
-    <link rel="stylesheet" href="../public/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="../public/stylesheets/style.css">
+    <link rel="stylesheet" href="./stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="./stylesheets/style.css">
 
-	<script type="text/javascript"  src="../public/javascripts/jquery-2.1.3.min.js"></script>
-    <script type="text/javascript"  src="../public/javascripts/robotmonitor.js"></script>
-	<script type="text/javascript"  src="../public/javascripts/robotcanvas.js"></script>
+	<script type="text/javascript"  src="./js/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript"  src="./js/robotmonitor.js"></script>
+	<script type="text/javascript"  src="./js/robotcanvas.js"></script>
     <script type="text/javascript"  src="modelBundle.js"></script>
 </head>
 <body>
@@ -13,11 +13,15 @@
     <h1>Toaster</h1>
     <canvas id="draw" resize="true"></canvas>
     <div>
-        <button id="connect" class="btn btn-default">Start</button>
+        <button id="start" class="btn btn-default">Start</button>
+    </div>
+    <div>
+        <span class="spanLabel">Remote</span>
+        <input id="remote" type="checkbox"/>
     </div>
     <div>
         <span class="spanLabel">Debug</span>
-        <input id="debug" type="checkbox">
+        <input id="debug" type="checkbox"/>
     </div>
     <div>
         <span class="spanLabel">Behaviours</span>
@@ -25,11 +29,11 @@
     </div>
     <div>
         <span class="spanLabel">Scale (m)</span>
-        <input id="scale" type="number" value="2">
+        <input id="scale" type="number" value="2"/>
     </div>
     <div>
         <span class="spanLabel">Centre bot</span>
-        <input id="centre" type="checkbox">
+        <input id="centre" type="checkbox"/>
     </div>
     <h2>Current State</h2>
     <table id="properties" class="table-condensed table-bordered">

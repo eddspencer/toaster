@@ -8,6 +8,7 @@ const RobotMonitor = function (canvas) {
   self.goalUpdated = function(x, y) {};
   self.toggleStart = function(running) {};
   self.setDebug = function(debug) {};
+  self.setConnectionRemote = function(remote) {};
 
   // Public functions
   self.setConfig = function(config) {
@@ -88,7 +89,11 @@ const RobotMonitor = function (canvas) {
     updateGoal(event.offsetX, event.offsetY);
   });
 
-  $('#connect').click(function () {
+  $('#remote').click(function(event) {
+    self.setConnectionRemote(event.currentTarget.value);
+  });
+
+  $('#start').click(function () {
     if (running) {
       $('#connect').text("Start");
       $('#behaviours').html('');

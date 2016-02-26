@@ -3,6 +3,7 @@
  */
 const MockBot = require('../mocks/MockBot');
 const MockEnvironment = require('../mocks/MockEnvironment');
+const LazyWebSocket = require('js/LazyWebSocket');
 
 const ModelTester = function(robotMontitor) {
   	var id = 0;
