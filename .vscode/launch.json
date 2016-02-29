@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
+      "args": [
+        "-u", "tdd",
+        "--timeout", "999999",
+        "--colors",
+        "js/test/**/*.js"
+      ],
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "cwd": "${workspaceRoot}",
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}/js"
+    }
+  ]
+}

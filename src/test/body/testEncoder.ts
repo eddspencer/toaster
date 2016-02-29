@@ -4,9 +4,6 @@ import { expect } from 'chai';
 import { Encoder } from "../../main/body/encoder";
 
 describe('Encoder', () => {
-
-  debugger;
-
   const encoder = new Encoder(0.6);
 
   beforeEach(() => {
@@ -18,7 +15,7 @@ describe('Encoder', () => {
     expect(encoder.ticks()).to.equal(0);
   });
 
-  it('should process ticks correctlys', () => {
+  it('should process ticks correctly', () => {
     encoder.addRaw(0.1);
     expect(encoder.ticks(), "Initial").to.equal(0);
     encoder.addRaw(0.8);

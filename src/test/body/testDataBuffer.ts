@@ -4,9 +4,6 @@ import { expect } from 'chai';
 import { AvgDataBuffer } from "../../main/body/dataBuffer";
 
 describe('Encoder', () => {
-
-  debugger;
-
   const dataBuffer = new AvgDataBuffer(5);
 
   beforeEach(() => {
