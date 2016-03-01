@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-open');
@@ -23,6 +24,7 @@ module.exports = function (grunt) {
         src: ['js/test/**/*.js']
       }
     },
+    clean: ["js"],
     typescript: {
       base: {
         src: ['src/**/*.ts'],
@@ -37,7 +39,7 @@ module.exports = function (grunt) {
     },
     watch: {
       files: '**/*.ts',
-      tasks: ['typescript']
+      tasks: ['clean', 'typescript']
     },
     open: {
       dev: {
@@ -46,5 +48,5 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['typescript', 'mochaTest']);
+  grunt.registerTask('default', ['clean', 'typescript', 'mochaTest']);
 }
