@@ -3,7 +3,7 @@
 import { expect } from 'chai'
 import { IntervalObserver } from "../../main/utils/observer"
 
-describe('Scheduler', () => {
+describe('Observer', () => {
   const observer = new IntervalObserver(5)
   var list: Array<number> = []
 

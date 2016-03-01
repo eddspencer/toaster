@@ -3,7 +3,7 @@
 import { expect } from 'chai'
 import { AvgDataBuffer } from "../../main/utils/dataBuffer"
 
-describe('Encoder', () => {
+describe('DatBuffer', () => {
   const dataBuffer = new AvgDataBuffer(5)
 
   beforeEach(() => {

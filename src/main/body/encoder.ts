@@ -26,7 +26,7 @@ export class Encoder {
 
       // When buffer is full calulate the ticks      
       if (this.buff.length >= this.buff.maxSize) {
-        this.ticks()
+        this.calculate()
       }
     })
   }
@@ -38,12 +38,12 @@ export class Encoder {
   stop(): void {
     this.observer.stop()
   }
-   
+
   addRaw(raw: number): void {
     this.buff.addRaw(raw)
   }
 
-  ticks(): number {
+  calculate() {
     const current = this.buff.read()
      
     // Do not do anything if there is no data in the buffer
@@ -58,6 +58,9 @@ export class Encoder {
       }
       this.state = current >= this.threshold ? State.HI : State.LOW
     }
+  }
+  
+  ticks(): number {
     return this.counter
   }
 }
