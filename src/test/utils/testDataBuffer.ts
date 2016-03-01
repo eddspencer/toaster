@@ -1,7 +1,7 @@
 /// <reference path="../../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../../typings/chai/chai.d.ts" />
 import { expect } from 'chai';
-import { AvgDataBuffer } from "../../main/body/dataBuffer";
+import { AvgDataBuffer } from "../../main/utils/dataBuffer";
 
 describe('Encoder', () => {
   const dataBuffer = new AvgDataBuffer(5);

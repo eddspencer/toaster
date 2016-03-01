@@ -1,11 +1,12 @@
-import { DataBuffer } from './databuffer';
-import { AvgDataBuffer } from './databuffer';
+import { DataBuffer } from '../utils/databuffer';
+import { AvgDataBuffer } from '../utils/databuffer';
 
 enum State { HI, LOW }
 
 export class Encoder {
   private state: State = null;
   private counter: number = 0;
+  
   constructor(private threshold: number = 0.5, private buff: DataBuffer<number> = new AvgDataBuffer()) { }
 
   reset(): void {
@@ -16,6 +17,14 @@ export class Encoder {
   
   addRaw(raw: number): void {
     this.buff.addRaw(raw);
+  }
+  
+  start(): void {
+    
+  }
+  
+  stop(): void {
+    
   }
 
   ticks(): number {
