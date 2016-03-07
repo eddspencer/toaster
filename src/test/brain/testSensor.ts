@@ -1,9 +1,9 @@
 /// <reference path="../../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../../typings/chai/chai.d.ts" />
 import { expect } from 'chai'
-import { IRSensorModel } from '../../main/body/sensor'
+import { IRSensorModel } from '../../main/brain/sensor'
 import { geometry } from '../../main/geometry/geometry'
-import { State, DefaultState } from '../../main/body/state'
+import { State, DefaultState } from '../../main/brain/state'
 
 describe('Sensor Model', () => {
   const sensor = new IRSensorModel(

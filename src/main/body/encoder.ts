@@ -1,5 +1,5 @@
-import { Sensor } from './sensor'
-import { State } from './state'
+import { Sensor } from '../brain/sensor'
+import { State } from '../brain/state'
 import { DataBuffer, AvgDataBuffer } from '../utils/databuffer'
 import { Observer, IntervalObserver } from '../utils/observer'
 
