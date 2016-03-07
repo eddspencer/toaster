@@ -3,8 +3,8 @@ interface ReduceFunction<T> {
 }
 
 export interface DataBuffer<T> {
-  addRaw(raw: T): void
-  addRaws(raw: Array<T>): void
+  add(value: T): void
+  addAll(list: Array<T>): void
   read(): T
   clear(): void
   length: number
@@ -17,13 +17,13 @@ export class SimpleDataBuffer<T> implements DataBuffer<T> {
 
   constructor(private reduce: ReduceFunction<T>, public maxSize: number = 1000) { }
 
-  addRaws(raws: Array<T>) {
-    this.buff.push.apply(this.buff, raws)
+  addAll(list: Array<T>) {
+    this.buff.push.apply(this.buff, list)
     this.ensureLength()
   }
 
-  addRaw(raw: T) {
-    this.buff.push(raw)
+  add(value: T) {
+    this.buff.push(value)
     this.ensureLength()
   }
 

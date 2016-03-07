@@ -16,19 +16,19 @@ describe('DatBuffer', () => {
   })
 
   it('should handle simple case', () => {
-    dataBuffer.addRaw(0.5)
+    dataBuffer.add(0.5)
     expect(dataBuffer.read()).to.equal(0.5)
     expect(dataBuffer.length).to.equal(1)
   })
 
   it('should smooth out values', () => {
-    dataBuffer.addRaws([0.5, 1, 0.5, 2])
+    dataBuffer.addAll([0.5, 1, 0.5, 2])
     expect(dataBuffer.read()).to.equal(1)
     expect(dataBuffer.length).to.equal(4)
   })
   
   it('should cycle the buffer', () => {
-    dataBuffer.addRaws([0.5, 1, 0.5, 2, 0.5, 1])
+    dataBuffer.addAll([0.5, 1, 0.5, 2, 0.5, 1])
     expect(dataBuffer.read()).to.equal(1)
     expect(dataBuffer.length).to.equal(5)
   })

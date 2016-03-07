@@ -1,13 +1,16 @@
+import { Sensor } from './sensor'
+import { State } from './state'
 import { DataBuffer, AvgDataBuffer } from '../utils/databuffer'
 import { Observer, IntervalObserver } from '../utils/observer'
 
-enum State { HI, LOW }
+enum EncoderState { HI, LOW }
 
-export class Encoder {
-  private state: State = null
-  private counter: number = 0
+export class Encoder implements Sensor<number> {
+  private state: EncoderState = null
+  reading: number = 0
 
   constructor(
+    public id: string,
     private threshold: number = 0.5,
     private buff: DataBuffer<number> = new AvgDataBuffer(10),
     private observer: Observer = new IntervalObserver(20)
@@ -16,7 +19,7 @@ export class Encoder {
   reset(): void {
     this.buff.clear()
     this.state = null
-    this.counter = 0
+    this.reading = 0
   }
 
   addRawProvider(provider: () => number) {
@@ -26,7 +29,7 @@ export class Encoder {
 
       // When buffer is full calulate the ticks      
       if (this.buff.length >= this.buff.maxSize) {
-        this.calculate()
+        this.sense(null)
       }
     })
   }
@@ -40,10 +43,14 @@ export class Encoder {
   }
 
   addRaw(raw: number): void {
-    this.buff.addRaw(raw)
+    this.buff.add(raw)
   }
 
-  calculate() {
+  calculate(): number {
+    return this.sense(null)
+  }
+
+  sense(state: State): number {
     const current = this.buff.read()
      
     // Do not do anything if there is no data in the buffer
@@ -52,15 +59,13 @@ export class Encoder {
 
       if (this.state != null) {
         // Only count transition from LOW to HIGH as tick
-        if (current >= this.threshold && this.state != State.HI) {
-          this.counter++
+        if (current >= this.threshold && this.state != EncoderState.HI) {
+          this.reading++
         }
       }
-      this.state = current >= this.threshold ? State.HI : State.LOW
+      this.state = current >= this.threshold ? EncoderState.HI : EncoderState.LOW
     }
-  }
-  
-  ticks(): number {
-    return this.counter
+
+    return this.reading;
   }
 }
