@@ -18,7 +18,7 @@ export interface State {
   world: World
 }
 
-export class DefaultState {
+export class DefaultState implements State {
   world: World = new BlankWorld()
   
   constructor(
