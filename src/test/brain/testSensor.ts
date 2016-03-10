@@ -5,7 +5,7 @@ import { IRSensorModel } from '../../main/brain/sensor'
 import { geometry } from '../../main/geometry/geometry'
 import { State, DefaultState } from '../../main/brain/state'
 
-describe('Sensor Model', () => {
+describe('Sensor', () => {
   const sensor = new IRSensorModel(
     "Test",
     geometry.createPoint(0, 0),
