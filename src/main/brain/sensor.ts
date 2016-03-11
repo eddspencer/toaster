@@ -1,7 +1,7 @@
 import { Point } from '../geometry/point'
 import { Polygon } from '../geometry/shapes'
 import { Vector } from '../geometry/vector'
-import { geometry } from '../geometry/geometry'
+import geometry from '../geometry/geometry'
 import { State } from './state'
 
 export interface Sensor<T> {

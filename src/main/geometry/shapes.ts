@@ -1,6 +1,6 @@
 import { Vector } from './vector'
 import { Point2d } from './point'
-import { geometry } from './geometry'
+import geometry from './geometry'
 
 /**
  * Polygon is an arrray of vectors that form a completed shape
