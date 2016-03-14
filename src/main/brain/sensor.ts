@@ -4,10 +4,13 @@ import { Vector } from '../geometry/vector'
 import geometry from '../geometry/geometry'
 import { State } from './state'
 
-export interface Sensor<T> {
+export interface SensorReading<T> {
   id: string
-  sense(state: State): T
   reading: T
+}
+
+export interface Sensor<T> extends SensorReading<T> {
+  sense(state: State): T
 }
 
 export interface IRSensor extends Sensor<number> {

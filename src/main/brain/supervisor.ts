@@ -65,7 +65,8 @@ export class DefaultSupervisor implements Supervisor {
         this.activeController.reset()
         this.activeController = controller
         this.behaviour = behaviour
-        // TODO have to handle this elsewhere
+        // TODO have to handle this elsewhere 
+        // TODO also have to copy this behaviour to state
         // this.progressMade = null // Changing behaviour resets any progress you may have had in previous state
         changed = true
       }
